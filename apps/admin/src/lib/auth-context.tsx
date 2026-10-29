@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 import axios from "axios";
-import type { AuthTokens } from "@sanchalan/shared-types";
+import type { AuthTokens } from "@setzo/shared-types";
 import { api, SESSION_EXPIRED_EVENT } from "./api.ts";
 import { getRefreshToken, setTokens, clearTokens } from "./authStorage.ts";
 

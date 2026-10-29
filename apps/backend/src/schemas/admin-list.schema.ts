@@ -30,7 +30,7 @@ export const bulkVendorSchema = z.discriminatedUnion("action", [
   }),
 ]);
 
-const eventType = z.enum(["wedding", "birthday", "corporate", "religious", "engagement_only", "custom"]);
+const eventType = z.enum(["wedding", "birthday", "corporate", "funeral", "engagement_only", "custom"]);
 
 export const updateCategorySchema = z
   .object({

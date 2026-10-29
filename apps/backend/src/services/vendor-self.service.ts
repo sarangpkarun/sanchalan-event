@@ -1,7 +1,7 @@
 import type {
   VendorCompleteness,
   VendorRequiredField,
-} from "@sanchalan/shared-types";
+} from "@setzo/shared-types";
 import {
   VENDOR_DESCRIPTION_MIN,
   VENDOR_MAX_PAST_WORK,

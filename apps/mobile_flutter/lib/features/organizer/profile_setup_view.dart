@@ -11,10 +11,10 @@ import '../../shared/widgets/bottom_action_bar.dart';
 import '../../shared/widgets/primary_button.dart';
 
 const _typeInfo = {
-  OrganizerType.individual: (Icons.person_outline, 'Planning it myself'),
-  OrganizerType.family: (Icons.family_restroom_outlined, 'For our family'),
-  OrganizerType.company: (Icons.business_outlined, 'For a business'),
-  OrganizerType.committee: (Icons.groups_outlined, 'For a group or society'),
+  OrganizerType.individual: (Icons.person_outline, 'Just you. Plan on your own, no team'),
+  OrganizerType.family: (Icons.family_restroom_outlined, 'Relatives plan together. Anyone you invite can edit'),
+  OrganizerType.company: (Icons.business_outlined, 'You lead. Staff join with your approval; only you and approvers change the budget'),
+  OrganizerType.committee: (Icons.groups_outlined, 'Members share the work. Give someone the approver role for the budget'),
 };
 
 /// One-time profile step after the first login: name and who is organizing.

@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sanchalan/core/theme/app_colors.dart';
-import 'package:sanchalan/dev/dev_menu.dart';
-import 'package:sanchalan/dev/gallery_screen.dart';
-import 'package:sanchalan/models/enums.dart';
-import 'package:sanchalan/shared/widgets/app_card.dart';
-import 'package:sanchalan/shared/widgets/app_text_field.dart';
-import 'package:sanchalan/shared/widgets/brand_mark.dart';
-import 'package:sanchalan/shared/widgets/empty_state.dart';
-import 'package:sanchalan/shared/widgets/error_retry.dart';
-import 'package:sanchalan/shared/widgets/primary_button.dart';
-import 'package:sanchalan/shared/widgets/progress_ring.dart';
-import 'package:sanchalan/shared/widgets/section_header.dart';
-import 'package:sanchalan/shared/widgets/skeleton.dart';
-import 'package:sanchalan/shared/widgets/status_chip.dart';
+import 'package:setzo/core/theme/app_colors.dart';
+import 'package:setzo/dev/dev_menu.dart';
+import 'package:setzo/dev/gallery_screen.dart';
+import 'package:setzo/models/enums.dart';
+import 'package:setzo/shared/widgets/app_card.dart';
+import 'package:setzo/shared/widgets/app_text_field.dart';
+import 'package:setzo/shared/widgets/brand_mark.dart';
+import 'package:setzo/shared/widgets/empty_state.dart';
+import 'package:setzo/shared/widgets/error_retry.dart';
+import 'package:setzo/shared/widgets/primary_button.dart';
+import 'package:setzo/shared/widgets/progress_ring.dart';
+import 'package:setzo/shared/widgets/section_header.dart';
+import 'package:setzo/shared/widgets/skeleton.dart';
+import 'package:setzo/shared/widgets/status_chip.dart';
 
 import '../helpers/pump_screen.dart';
 
@@ -178,13 +178,13 @@ void main() {
     expect(find.bySemanticsLabel('Loading'), findsOneWidget);
   });
 
-  testWidgets('BrandMark is announced as Sanchalan, with and without wordmark', (tester) async {
+  testWidgets('BrandMark is announced as SetzO, with and without wordmark', (tester) async {
     await pumpScreen(
       tester,
       scaffold(const Column(children: [BrandMark(size: 40), BrandMark(wordmark: true)])),
     );
-    expect(find.bySemanticsLabel('Sanchalan'), findsNWidgets(2));
-    expect(find.text('Sanchalan'), findsOneWidget); // the wordmark text
+    expect(find.bySemanticsLabel('SetzO'), findsNWidgets(2));
+    expect(find.text('SetzO'), findsOneWidget); // the wordmark text
   });
 
   group('debug previews fit small screens', () {

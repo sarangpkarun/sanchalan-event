@@ -1,4 +1,4 @@
-import type { AdminRole, AuthRole } from "@sanchalan/shared-types";
+import type { AdminRole, AuthRole } from "@setzo/shared-types";
 import { env } from "../lib/env.js";
 import { prisma } from "../lib/prisma.js";
 import { generateOtp } from "../lib/otp.js";

@@ -23,7 +23,7 @@ export function buildBudgetSplitPrompt(input: BudgetSplitInput) {
     "Rules:",
     "- Return between 4 and 10 categories.",
     "- Only include categories that genuinely apply to this event. Do not reuse a generic list: a",
-    "  corporate conference, a child's birthday, a religious ceremony and a wedding need different categories.",
+    "  corporate conference, a child's birthday, a funeral service and a wedding need different categories.",
     "  For a custom event, infer what is needed from its name and details.",
     "- categoryKey is lowercase snake_case, short and specific (e.g. venue, catering, stage_and_av).",
     "- percentage is a positive number, no single category above 70, and ALL percentages sum to exactly 100.",

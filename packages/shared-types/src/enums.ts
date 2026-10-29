@@ -27,12 +27,13 @@ export type VendorReviewAction =
 export type AdminRole = "super_admin" | "vendor_reviewer" | "support";
 
 export type EventGroupRole = "owner" | "editor" | "viewer" | "approver";
+export type MemberStatus = "active" | "pending";
 
 export type EventType =
   | "wedding"
   | "birthday"
   | "corporate"
-  | "religious"
+  | "funeral"
   | "engagement_only"
   | "custom";
 

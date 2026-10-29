@@ -12,7 +12,7 @@ import 'event_vendors_tab.dart';
 import 'home_view.dart' show HomeStatus;
 import 'roadmap_tab.dart';
 
-enum EventMenuAction { edit, delete }
+enum EventMenuAction { team, edit, delete }
 
 /// One event with Roadmap, Budget and Vendors tabs. Plain widget: data in, callbacks out.
 class EventDetailView extends StatelessWidget {
@@ -26,6 +26,7 @@ class EventDetailView extends StatelessWidget {
     this.generating = false,
     this.generateError,
     this.onRetry,
+    this.onTeam,
     this.onEdit,
     this.onDelete,
     this.onGenerate,
@@ -47,6 +48,7 @@ class EventDetailView extends StatelessWidget {
   final bool generating;
   final String? generateError;
   final VoidCallback? onRetry;
+  final VoidCallback? onTeam;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
   final VoidCallback? onGenerate;
@@ -96,21 +98,29 @@ class EventDetailView extends StatelessWidget {
             PopupMenuButton<EventMenuAction>(
               tooltip: 'More',
               onSelected: (a) => switch (a) {
+                EventMenuAction.team => onTeam?.call(),
                 EventMenuAction.edit => onEdit?.call(),
                 EventMenuAction.delete => onDelete?.call(),
               },
-              itemBuilder: (_) => const [
-                PopupMenuItem(
-                  value: EventMenuAction.edit,
-                  child: ListTile(leading: Icon(Icons.edit_outlined), title: Text('Edit event details')),
-                ),
-                PopupMenuItem(
-                  value: EventMenuAction.delete,
-                  child: ListTile(
-                    leading: Icon(Icons.delete_outline, color: AppColors.errorText),
-                    title: Text('Delete event', style: TextStyle(color: AppColors.errorText)),
+              itemBuilder: (_) => [
+                if (onTeam != null)
+                  const PopupMenuItem(
+                    value: EventMenuAction.team,
+                    child: ListTile(leading: Icon(Icons.groups_outlined), title: Text('Team')),
                   ),
-                ),
+                if (e.canEdit)
+                  const PopupMenuItem(
+                    value: EventMenuAction.edit,
+                    child: ListTile(leading: Icon(Icons.edit_outlined), title: Text('Edit event details')),
+                  ),
+                if (e.isOwner)
+                  const PopupMenuItem(
+                    value: EventMenuAction.delete,
+                    child: ListTile(
+                      leading: Icon(Icons.delete_outline, color: AppColors.errorText),
+                      title: Text('Delete event', style: TextStyle(color: AppColors.errorText)),
+                    ),
+                  ),
               ],
             ),
           ],

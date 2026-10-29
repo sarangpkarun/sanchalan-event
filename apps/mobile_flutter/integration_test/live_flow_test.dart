@@ -12,14 +12,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:sanchalan/app.dart';
-import 'package:sanchalan/core/auth_storage.dart';
-import 'package:sanchalan/core/config.dart';
-import 'package:sanchalan/core/providers.dart';
-import 'package:sanchalan/core/router/paths.dart';
-import 'package:sanchalan/core/router/router.dart';
-import 'package:sanchalan/features/organizer/widgets/task_tile.dart';
-import 'package:sanchalan/shared/widgets/app_text_field.dart';
+import 'package:setzo/app.dart';
+import 'package:setzo/core/auth_storage.dart';
+import 'package:setzo/core/config.dart';
+import 'package:setzo/core/providers.dart';
+import 'package:setzo/core/router/paths.dart';
+import 'package:setzo/core/router/router.dart';
+import 'package:setzo/features/organizer/widgets/task_tile.dart';
+import 'package:setzo/shared/widgets/app_text_field.dart';
 
 const adminPassword = String.fromEnvironment('ADMIN_PASSWORD');
 const otp = '123456';
@@ -66,13 +66,13 @@ Finder input(String label) =>
     find.descendant(of: find.widgetWithText(AppTextField, label), matching: find.byType(TextField));
 
 ProviderContainer container(WidgetTester tester) =>
-    ProviderScope.containerOf(tester.element(find.byType(SanchalanApp)));
+    ProviderScope.containerOf(tester.element(find.byType(SetzOApp)));
 
 String location(WidgetTester tester) => container(tester).read(routerProvider).state.uri.path;
 
 Future<void> startApp(WidgetTester tester, {bool signedOut = true}) async {
   if (signedOut) await const FlutterSecureStorage().deleteAll();
-  await tester.pumpWidget(const ProviderScope(child: SanchalanApp()));
+  await tester.pumpWidget(const ProviderScope(child: SetzOApp()));
   await tester.pump(const Duration(seconds: 1));
   // Log every API call with its result and duration, so a failure can be read from the test output.
   final dio = container(tester).read(dioProvider);
@@ -125,7 +125,7 @@ Future<void> signOut(WidgetTester tester, {required bool vendor}) async {
 Future<Dio> adminClient() async {
   final dio = Dio(BaseOptions(baseUrl: apiUrl, validateStatus: (_) => true));
   final login = await dio.post<Map<String, dynamic>>('/admin/auth/login', data: {
-    'email': 'admin@sanchalan.internal',
+    'email': 'admin@setzo.internal',
     'password': adminPassword,
   });
   expect(login.statusCode, 200, reason: 'admin login failed: ${login.data}');

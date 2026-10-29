@@ -1,7 +1,7 @@
 {
-  "name": "@sanchalan/shared-types",
+  "name": "@setzo/shared-types",
   "version": "1.0.0",
-  "description": "Shared TypeScript interfaces for the Sanchalan data model — the single definition of what an EventGroup, Task, etc. look like, imported by both backend and mobile.",
+  "description": "Shared TypeScript interfaces for the SetzO data model — the single definition of what an EventGroup, Task, etc. look like, imported by both backend and mobile.",
   "private": true,
   "type": "module",
   "main": "./src/index.ts",

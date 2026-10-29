@@ -2,14 +2,14 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sanchalan/app.dart';
-import 'package:sanchalan/core/auth_storage.dart';
-import 'package:sanchalan/core/router/paths.dart';
-import 'package:sanchalan/core/router/router.dart';
-import 'package:sanchalan/features/auth/auth_controller.dart';
-import 'package:sanchalan/features/vendor/vendor_providers.dart';
-import 'package:sanchalan/models/enums.dart';
-import 'package:sanchalan/models/vendor.dart';
+import 'package:setzo/app.dart';
+import 'package:setzo/core/auth_storage.dart';
+import 'package:setzo/core/router/paths.dart';
+import 'package:setzo/core/router/router.dart';
+import 'package:setzo/features/auth/auth_controller.dart';
+import 'package:setzo/features/vendor/vendor_providers.dart';
+import 'package:setzo/models/enums.dart';
+import 'package:setzo/models/vendor.dart';
 
 import '../../helpers/container.dart';
 import '../../helpers/fake_adapter.dart';
@@ -27,7 +27,7 @@ Future<ProviderContainer> pumpApp(
   final (container, _) = makeContainer(handler, secure: secure);
   await tester.pumpWidget(UncontrolledProviderScope(
     container: container,
-    child: const SanchalanApp(),
+    child: const SetzOApp(),
   ));
   await tester.pumpAndSettle();
   return container;
@@ -42,7 +42,7 @@ void main() {
   testWidgets('no stored session -> sign-in screen', (tester) async {
     final c = await pumpApp(tester, routes({}));
     expect(location(c), AppPaths.welcome);
-    expect(find.text('Plan every celebration, stress-free'), findsOneWidget);
+    expect(find.text('Every celebration begins with a plan.'), findsOneWidget);
   });
 
   group('organizer', () {

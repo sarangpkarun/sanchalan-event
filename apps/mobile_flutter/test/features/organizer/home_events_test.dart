@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sanchalan/dev/mock_data.dart';
-import 'package:sanchalan/features/organizer/events_view.dart';
-import 'package:sanchalan/features/organizer/home_view.dart';
-import 'package:sanchalan/features/organizer/organizer_shell.dart';
-import 'package:sanchalan/features/organizer/widgets/hero_card.dart';
-import 'package:sanchalan/shared/widgets/skeleton.dart';
+import 'package:setzo/dev/mock_data.dart';
+import 'package:setzo/features/organizer/events_view.dart';
+import 'package:setzo/features/organizer/home_view.dart';
+import 'package:setzo/features/organizer/organizer_shell.dart';
+import 'package:setzo/features/organizer/widgets/hero_card.dart';
+import 'package:setzo/shared/widgets/skeleton.dart';
 
 import '../../helpers/pump_screen.dart';
 

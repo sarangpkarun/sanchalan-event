@@ -54,7 +54,7 @@ describe("auth gating and shell", () => {
     api.post.mockRejectedValue(new Error("Network Error"));
     renderRoutes("/vendors");
     expect(await screen.findByText("Can’t reach the server")).toBeInTheDocument();
-    expect(localStorage.getItem("sanchalan.admin.refreshToken")).toBe("r");
+    expect(localStorage.getItem("setzo.admin.refreshToken")).toBe("r");
   });
 
   it("shows name, role and only the nav items the role may use", async () => {

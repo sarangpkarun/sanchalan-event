@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sanchalan/dev/mock_data.dart';
-import 'package:sanchalan/features/organizer/home_view.dart' show HomeStatus;
-import 'package:sanchalan/features/organizer/organizer_profile_view.dart';
-import 'package:sanchalan/features/organizer/vendor_detail_view.dart';
-import 'package:sanchalan/features/organizer/vendors_view.dart';
-import 'package:sanchalan/features/organizer/widgets/vendor_card.dart';
-import 'package:sanchalan/features/vendor/vendor_repository.dart';
-import 'package:sanchalan/models/enums.dart';
-import 'package:sanchalan/models/organizer.dart';
-import 'package:sanchalan/models/vendor.dart';
-import 'package:sanchalan/shared/widgets/skeleton.dart';
+import 'package:setzo/dev/mock_data.dart';
+import 'package:setzo/features/organizer/home_view.dart' show HomeStatus;
+import 'package:setzo/features/organizer/organizer_profile_view.dart';
+import 'package:setzo/features/organizer/vendor_detail_view.dart';
+import 'package:setzo/features/organizer/vendors_view.dart';
+import 'package:setzo/features/organizer/widgets/vendor_card.dart';
+import 'package:setzo/features/vendor/vendor_repository.dart';
+import 'package:setzo/models/enums.dart';
+import 'package:setzo/models/organizer.dart';
+import 'package:setzo/models/vendor.dart';
+import 'package:setzo/shared/widgets/skeleton.dart';
 
 import '../../helpers/pump_screen.dart';
 
@@ -245,8 +245,18 @@ void main() {
       expect(find.text('Family organizer'), findsOneWidget);
       expect(find.text('+919876543210'), findsOneWidget);
       await tester.tap(find.text('Edit profile'));
+      await tester.scrollUntilVisible(find.text('Sign out'), 200);
       await tester.tap(find.text('Sign out'));
       expect(calls, ['edit', 'signout']);
+    });
+
+    testWidgets('shows event counts and placeholder rows', (tester) async {
+      await pumpScreen(tester, OrganizerProfileView(organizer: mock.organizer), size: const Size(400, 900));
+      expect(find.text('Upcoming'), findsOneWidget);
+      expect(find.text('Saved vendors'), findsOneWidget);
+      await tester.tap(find.text('Saved vendors'));
+      await tester.pump();
+      expect(find.text('Saved vendors is coming soon'), findsOneWidget);
     });
 
     testWidgets('a new organizer without a name or type still renders', (tester) async {

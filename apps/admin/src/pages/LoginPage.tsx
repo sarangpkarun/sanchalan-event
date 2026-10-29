@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import axios from "axios";
-import type { AuthTokens } from "@sanchalan/shared-types";
+import type { AuthTokens } from "@setzo/shared-types";
 import { api } from "../lib/api.ts";
 import { useAuth } from "../lib/auth-context.tsx";
 import { BrandMark } from "../components/icons.tsx";
@@ -41,7 +41,7 @@ export function LoginPage() {
     <div className="centered-page login-page">
       <form className="card login-form" onSubmit={handleSubmit}>
         <div className="brand"><BrandMark /></div>
-        <h1>Sanchalan Admin</h1>
+        <h1>SetzO Admin</h1>
         <p className="muted">Sign in to continue.</p>
         {notice && <p className="notice">{notice}</p>}
         <label>

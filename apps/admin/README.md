@@ -1,4 +1,4 @@
-# Sanchalan Admin
+# SetzO Admin
 
 Internal admin web app: vendor review, category proposals, and admin team/account management.
 Vite + React + TypeScript, plain CSS, no UI kit.

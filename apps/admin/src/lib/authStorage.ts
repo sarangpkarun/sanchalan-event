@@ -1,5 +1,5 @@
-export const ACCESS_TOKEN_KEY = "sanchalan.admin.accessToken";
-export const REFRESH_TOKEN_KEY = "sanchalan.admin.refreshToken";
+export const ACCESS_TOKEN_KEY = "setzo.admin.accessToken";
+export const REFRESH_TOKEN_KEY = "setzo.admin.refreshToken";
 
 export const getAccessToken = () => localStorage.getItem(ACCESS_TOKEN_KEY);
 export const getRefreshToken = () => localStorage.getItem(REFRESH_TOKEN_KEY);

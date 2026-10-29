@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sanchalan/core/router/guard_state.dart';
-import 'package:sanchalan/core/router/paths.dart';
-import 'package:sanchalan/core/router/redirects.dart';
-import 'package:sanchalan/features/auth/auth_state.dart';
-import 'package:sanchalan/models/enums.dart';
+import 'package:setzo/core/router/guard_state.dart';
+import 'package:setzo/core/router/paths.dart';
+import 'package:setzo/core/router/redirects.dart';
+import 'package:setzo/features/auth/auth_state.dart';
+import 'package:setzo/models/enums.dart';
 
 const loading = GuardState(auth: AuthState.loading());
 const unauthed = GuardState(auth: AuthState.unauthed());

@@ -10,7 +10,7 @@ import {
   type RoadmapItem,
   type RoadmapRegenMode,
 } from "../schemas/roadmap.schema.js";
-import { getOwnedEventGroupOrThrow } from "./event-group.service.js";
+import { getEditableEventGroupOrThrow } from "./event-group.service.js";
 
 interface TemplateForPrompt {
   id: string;
@@ -267,7 +267,7 @@ export async function generateRoadmap(
   eventGroupId: string,
   mode?: RoadmapRegenMode
 ) {
-  const eventGroup = await getOwnedEventGroupOrThrow(organizerId, eventGroupId);
+  const eventGroup = await getEditableEventGroupOrThrow(organizerId, eventGroupId);
 
   const existingTaskCount = await prisma.task.count({ where: { eventGroupId } });
   if (existingTaskCount > 0 && !mode) {

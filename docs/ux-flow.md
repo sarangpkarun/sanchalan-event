@@ -1,4 +1,4 @@
-# Sanchalan app: user flows and screen inventory
+# SetzO app: user flows and screen inventory
 
 Basis for the Flutter UI revamp (FLUTTER_MIGRATION.md, Phase 6). It describes what the app does today and who uses it. It does not add features.
 

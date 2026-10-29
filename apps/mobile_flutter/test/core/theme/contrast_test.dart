@@ -2,7 +2,7 @@ import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sanchalan/core/theme/app_colors.dart';
+import 'package:setzo/core/theme/app_colors.dart';
 
 double _channel(double c) => c <= 0.03928 ? c / 12.92 : math.pow((c + 0.055) / 1.055, 2.4).toDouble();
 

@@ -23,6 +23,7 @@ class EventsView extends StatelessWidget {
     this.onRefresh,
     this.onOpenEvent,
     this.onNewEvent,
+    this.onJoin,
   });
 
   final HomeStatus status;
@@ -33,6 +34,9 @@ class EventsView extends StatelessWidget {
   final ValueChanged<String>? onOpenEvent;
   final VoidCallback? onNewEvent;
 
+  /// Opens the "join with a code" prompt.
+  final VoidCallback? onJoin;
+
   @override
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
@@ -41,6 +45,14 @@ class EventsView extends StatelessWidget {
       appBar: AppBar(
         title: const Text('My events'),
         automaticallyImplyLeading: false,
+        actions: [
+          if (onJoin != null)
+            TextButton.icon(
+              onPressed: onJoin,
+              icon: const Icon(Icons.group_add_outlined),
+              label: const Text('Join with code'),
+            ),
+        ],
       ),
       floatingActionButton: status == HomeStatus.ready && events.isNotEmpty
           ? FloatingActionButton.extended(

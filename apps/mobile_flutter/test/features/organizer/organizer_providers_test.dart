@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sanchalan/features/organizer/organizer_providers.dart';
+import 'package:setzo/features/organizer/organizer_providers.dart';
 
 import '../../helpers/container.dart';
 import '../../helpers/fake_adapter.dart';

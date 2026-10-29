@@ -80,14 +80,14 @@ export function Layout() {
         )}
         <span className="brand">
           <BrandMark />
-          Sanchalan Admin
+          SetzO Admin
         </span>
       </header>
       {open && <div className="scrim" onClick={() => setOpen(false)} />}
       <aside className={open ? "sidebar sidebar-open" : "sidebar"}>
         <div className="brand">
           <BrandMark />
-          <span>Sanchalan Admin</span>
+          <span>SetzO Admin</span>
         </div>
         {showNav && (
           <nav aria-label="Main" onClick={() => setOpen(false)}>

@@ -1,4 +1,4 @@
-import type { AdminRole, AuthRole } from "@sanchalan/shared-types";
+import type { AdminRole, AuthRole } from "@setzo/shared-types";
 
 declare global {
   namespace Express {

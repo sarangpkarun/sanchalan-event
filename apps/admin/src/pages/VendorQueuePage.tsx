@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { vendorCategoryLabel } from "@sanchalan/shared-types";
-import type { VendorStatus } from "@sanchalan/shared-types";
+import { vendorCategoryLabel } from "@setzo/shared-types";
+import type { VendorStatus } from "@setzo/shared-types";
 import { useVendors } from "../lib/vendor-context.tsx";
 import { api } from "../lib/api.ts";
 import { useAuth } from "../lib/auth-context.tsx";

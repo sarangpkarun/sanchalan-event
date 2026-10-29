@@ -10,6 +10,14 @@ import {
   updateBudgetCategoryHandler,
   createBudgetCategoryHandler,
 } from "../controllers/event-group.controller.js";
+import {
+  joinHandler,
+  listMembersHandler,
+  createInviteHandler,
+  revokeInviteHandler,
+  updateMemberHandler,
+  removeMemberHandler,
+} from "../controllers/event-member.controller.js";
 import { generateRoadmapHandler } from "../controllers/roadmap.controller.js";
 import { createTaskHandler, listEventGroupTasksHandler } from "../controllers/task.controller.js";
 
@@ -18,6 +26,7 @@ eventGroupRouter.use(requireAuth, requireRole("organizer"), requireActiveOrganiz
 
 eventGroupRouter.post("/", createEventGroupHandler);
 eventGroupRouter.get("/me", listMyEventGroupsHandler); // MUST precede /:id
+eventGroupRouter.post("/join", joinHandler);
 eventGroupRouter.get("/:id", getEventGroupHandler);
 eventGroupRouter.patch("/:id", updateEventGroupHandler);
 eventGroupRouter.delete("/:id", deleteEventGroupHandler);
@@ -27,3 +36,9 @@ eventGroupRouter.post("/:id/tasks", createTaskHandler);
 eventGroupRouter.patch("/:id/budget-categories/:categoryId", updateBudgetCategoryHandler);
 eventGroupRouter.post("/:id/budget-categories", createBudgetCategoryHandler);
 eventGroupRouter.delete("/:id/budget-categories/:categoryId", deleteBudgetCategoryHandler);
+
+eventGroupRouter.get("/:id/members", listMembersHandler);
+eventGroupRouter.post("/:id/invites", createInviteHandler);
+eventGroupRouter.delete("/:id/invites/:inviteId", revokeInviteHandler);
+eventGroupRouter.patch("/:id/members/:userId", updateMemberHandler);
+eventGroupRouter.delete("/:id/members/:userId", removeMemberHandler);

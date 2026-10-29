@@ -1,5 +1,5 @@
 {
-  "name": "@sanchalan/backend",
+  "name": "@setzo/backend",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@prisma/client": "^6.5.0",
-    "@sanchalan/shared-types": "workspace:*",
+    "@setzo/shared-types": "workspace:*",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
     "express": "^5.2.1",

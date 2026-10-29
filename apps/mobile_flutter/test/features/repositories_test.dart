@@ -1,13 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sanchalan/features/auth/auth_repository.dart';
-import 'package:sanchalan/features/organizer/organizer_repository.dart';
-import 'package:sanchalan/features/vendor/vendor_repository.dart';
-import 'package:sanchalan/models/enums.dart';
-import 'package:sanchalan/models/event.dart';
-import 'package:sanchalan/models/organizer.dart';
-import 'package:sanchalan/models/roadmap.dart';
-import 'package:sanchalan/models/vendor.dart';
+import 'package:setzo/features/auth/auth_repository.dart';
+import 'package:setzo/features/organizer/organizer_repository.dart';
+import 'package:setzo/features/vendor/vendor_repository.dart';
+import 'package:setzo/models/enums.dart';
+import 'package:setzo/models/event.dart';
+import 'package:setzo/models/organizer.dart';
+import 'package:setzo/models/roadmap.dart';
+import 'package:setzo/models/vendor.dart';
 
 import '../helpers/fake_adapter.dart';
 

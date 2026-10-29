@@ -2,12 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sanchalan/features/auth/otp_screen.dart';
-import 'package:sanchalan/features/auth/phone_screen.dart';
-import 'package:sanchalan/features/auth/welcome_screen.dart';
-import 'package:sanchalan/models/enums.dart';
-import 'package:sanchalan/shared/widgets/otp_boxes.dart';
-import 'package:sanchalan/shared/widgets/primary_button.dart';
+import 'package:setzo/features/auth/otp_screen.dart';
+import 'package:setzo/features/auth/phone_screen.dart';
+import 'package:setzo/features/auth/welcome_screen.dart';
+import 'package:setzo/models/enums.dart';
+import 'package:setzo/shared/widgets/otp_boxes.dart';
+import 'package:setzo/shared/widgets/primary_button.dart';
 
 import '../../helpers/pump_screen.dart';
 
@@ -18,11 +18,12 @@ bool enabled(WidgetTester tester, Finder f) => tester.widget<FilledButton>(f).on
 
 void main() {
   group('WelcomeScreen', () {
-    testWidgets('shows the promise and starts on tap', (tester) async {
+    testWidgets('shows the quote and starts on tap of the round button', (tester) async {
       var taps = 0;
       await pumpScreen(tester, WelcomeScreen(onGetStarted: () => taps++));
-      expect(find.text('Plan every celebration, stress-free'), findsOneWidget);
-      await tester.tap(find.text('Get started'));
+      expect(find.text('Every celebration begins with a plan.'), findsOneWidget);
+      expect(find.text('SetzO'), findsOneWidget);
+      await tester.tap(find.bySemanticsLabel("Let's go"));
       expect(taps, 1);
     });
 

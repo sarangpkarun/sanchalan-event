@@ -16,6 +16,7 @@ import '../organizer_repository.dart';
 import '../sheets/budget_category_sheet.dart';
 import '../sheets/regenerate_sheet.dart';
 import '../sheets/task_sheet.dart';
+import '../sheets/team_sheet.dart';
 
 /// Optional instructions for the event screen when it opens, e.g. from a home
 /// shortcut: which tab to show and which sheet to open straight away.
@@ -253,6 +254,7 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
       generating: _generating,
       generateError: _generateError,
       onRetry: () => ref.invalidate(eventDetailProvider(_id)),
+      onTeam: event == null ? null : () => showTeamSheet(context, eventId: _id, eventName: event.name),
       onEdit: () => context.push(AppPaths.eventEdit(_id)),
       onEditTotal: () => context.push(AppPaths.eventEdit(_id)),
       onDelete: event == null ? null : () => _delete(event),

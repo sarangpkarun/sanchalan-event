@@ -26,7 +26,7 @@ enum VendorStatus { draft, pendingReview, published, rejected, suspended }
 enum CategoryProposalStatus { pending, approved, rejected, merged }
 
 @JsonEnum(fieldRename: FieldRename.snake)
-enum EventType { wedding, birthday, corporate, religious, engagementOnly, custom }
+enum EventType { wedding, birthday, corporate, funeral, engagementOnly, custom }
 
 @JsonEnum(fieldRename: FieldRename.snake)
 enum BudgetTier { essential, standard, premium, luxury }

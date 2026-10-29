@@ -2,7 +2,7 @@ import axios, { type AxiosError, type InternalAxiosRequestConfig } from "axios";
 import { API_BASE_URL } from "./config.ts";
 import { getAccessToken, getRefreshToken, setTokens, clearTokens } from "./authStorage.ts";
 
-export const SESSION_EXPIRED_EVENT = "sanchalan-admin:session-expired";
+export const SESSION_EXPIRED_EVENT = "setzo-admin:session-expired";
 
 export const api = axios.create({
   baseURL: API_BASE_URL,

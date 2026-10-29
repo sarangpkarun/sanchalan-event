@@ -1,5 +1,5 @@
 // Runtime copy of the vendor-profile limits in packages/shared-types/src/vendor-self.ts.
-// The backend can only import *types* from @sanchalan/shared-types: that package ships
+// The backend can only import *types* from @setzo/shared-types: that package ships
 // TypeScript source, which Node can't run in production (type imports are erased at build).
 // Keep these values in sync with the shared-types constants by hand.
 export const VENDOR_MAX_CATEGORIES = 5;

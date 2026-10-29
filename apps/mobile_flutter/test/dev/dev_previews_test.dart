@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sanchalan/core/theme/app_theme.dart';
-import 'package:sanchalan/dev/dev_routes.dart';
-import 'package:sanchalan/dev/dev_scenario.dart';
-import 'package:sanchalan/dev/dev_vendor.dart';
-import 'package:sanchalan/dev/mock_data.dart';
+import 'package:setzo/core/theme/app_theme.dart';
+import 'package:setzo/dev/dev_routes.dart';
+import 'package:setzo/dev/dev_scenario.dart';
+import 'package:setzo/dev/dev_vendor.dart';
+import 'package:setzo/dev/mock_data.dart';
 
 /// Opens the debug previews at [location] in a real router, like the app does.
 Future<GoRouter> openPreview(WidgetTester tester, String location, {Size size = const Size(400, 1800)}) async {

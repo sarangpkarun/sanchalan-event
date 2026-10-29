@@ -2,13 +2,13 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sanchalan/app.dart';
-import 'package:sanchalan/core/providers.dart';
-import 'package:sanchalan/core/router/paths.dart';
-import 'package:sanchalan/core/router/router.dart';
-import 'package:sanchalan/features/auth/auth_messages.dart';
-import 'package:sanchalan/features/auth/country_codes.dart';
-import 'package:sanchalan/models/enums.dart';
+import 'package:setzo/app.dart';
+import 'package:setzo/core/providers.dart';
+import 'package:setzo/core/router/paths.dart';
+import 'package:setzo/core/router/router.dart';
+import 'package:setzo/features/auth/auth_messages.dart';
+import 'package:setzo/features/auth/country_codes.dart';
+import 'package:setzo/models/enums.dart';
 
 import '../../helpers/container.dart';
 import '../../helpers/fake_adapter.dart';
@@ -17,13 +17,13 @@ String location(ProviderContainer c) => c.read(routerProvider).state.uri.path;
 
 Future<ProviderContainer> pumpApp(WidgetTester tester, Handler handler) async {
   final (container, _) = makeContainer(handler);
-  await tester.pumpWidget(UncontrolledProviderScope(container: container, child: const SanchalanApp()));
+  await tester.pumpWidget(UncontrolledProviderScope(container: container, child: const SetzOApp()));
   await tester.pumpAndSettle();
   return container;
 }
 
 Future<void> signInThroughScreens(WidgetTester tester, {String role = "I'm planning an event"}) async {
-  await tester.tap(find.text('Get started'));
+  await tester.tap(find.bySemanticsLabel("Let's go"));
   await tester.pumpAndSettle();
   await tester.tap(find.text(role));
   await tester.enterText(find.byType(TextField), '98765 43210');
@@ -95,7 +95,7 @@ void main() {
       final (container, adapter) = makeContainer(routes({
         'POST /auth/otp/request': (_) => jsonBody({'expiresInSeconds': 300}),
       }));
-      await tester.pumpWidget(UncontrolledProviderScope(container: container, child: const SanchalanApp()));
+      await tester.pumpWidget(UncontrolledProviderScope(container: container, child: const SetzOApp()));
       await tester.pumpAndSettle();
       await signInThroughScreens(tester, role: "I'm a vendor");
       expect(adapter.last('/auth/otp/request').data, {'phoneNumber': '+919876543210', 'role': 'vendor'});
@@ -188,7 +188,7 @@ void main() {
 
     testWidgets('the back arrow on the phone screen returns to welcome', (tester) async {
       final c = await pumpApp(tester, routes({}));
-      await tester.tap(find.text('Get started'));
+      await tester.tap(find.bySemanticsLabel("Let's go"));
       await tester.pumpAndSettle();
       await tester.tap(find.byTooltip('Back'));
       await tester.pumpAndSettle();

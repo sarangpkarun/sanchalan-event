@@ -3,7 +3,8 @@ import type { Prisma, Task } from "@prisma/client";
 import { prisma } from "../lib/prisma.js";
 import { AppError } from "../lib/errors.js";
 import { toDateOnly } from "../lib/serialize.js";
-import { getOwnedEventGroupOrThrow } from "./event-group.service.js";
+import { getEditableEventGroupOrThrow } from "./event-group.service.js";
+import { requireRead } from "./event-access.service.js";
 import type { UpdateTaskInput, CreateTaskInput } from "../schemas/task.schema.js";
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -29,8 +30,8 @@ export async function getOwnedTaskOrThrow(organizerId: string, taskId: string): 
   const task = await prisma.task.findUnique({ where: { id: taskId } });
   if (!task) throw new AppError(404, "Task not found");
   // Reuses the existing ownership check rather than re-implementing it —
-  // throws 404/403 exactly as getOwnedEventGroupOrThrow already does.
-  await getOwnedEventGroupOrThrow(organizerId, task.eventGroupId);
+  // throws 404/403 exactly as getEditableEventGroupOrThrow already does.
+  await getEditableEventGroupOrThrow(organizerId, task.eventGroupId);
   return task;
 }
 
@@ -140,7 +141,7 @@ export async function createTask(
   eventGroupId: string,
   input: CreateTaskInput
 ) {
-  await getOwnedEventGroupOrThrow(organizerId, eventGroupId);
+  await getEditableEventGroupOrThrow(organizerId, eventGroupId);
 
   const category = await resolveTaskCategory(input.category);
 
@@ -217,7 +218,7 @@ export async function listEventGroupTasks(
   eventGroupId: string,
   includeNotApplicable = false
 ) {
-  await getOwnedEventGroupOrThrow(organizerId, eventGroupId);
+  await requireRead(organizerId, eventGroupId);
 
   const rows = await prisma.task.findMany({
     where: includeNotApplicable ? { eventGroupId } : { eventGroupId, status: { not: "not_applicable" } },

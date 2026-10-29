@@ -4,17 +4,17 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sanchalan/app.dart';
-import 'package:sanchalan/core/auth_storage.dart';
-import 'package:sanchalan/core/link_launcher.dart';
-import 'package:sanchalan/core/router/paths.dart';
-import 'package:sanchalan/core/router/router.dart';
-import 'package:sanchalan/features/organizer/event_stats.dart';
-import 'package:sanchalan/features/organizer/pages/event_detail_page.dart' show EventHomeArgs;
-import 'package:sanchalan/features/organizer/sheets/budget_category_sheet.dart';
-import 'package:sanchalan/features/organizer/sheets/task_sheet.dart';
-import 'package:sanchalan/features/organizer/widgets/hero_card.dart';
-import 'package:sanchalan/models/roadmap.dart';
+import 'package:setzo/app.dart';
+import 'package:setzo/core/auth_storage.dart';
+import 'package:setzo/core/link_launcher.dart';
+import 'package:setzo/core/router/paths.dart';
+import 'package:setzo/core/router/router.dart';
+import 'package:setzo/features/organizer/event_stats.dart';
+import 'package:setzo/features/organizer/pages/event_detail_page.dart' show EventHomeArgs;
+import 'package:setzo/features/organizer/sheets/budget_category_sheet.dart';
+import 'package:setzo/features/organizer/sheets/task_sheet.dart';
+import 'package:setzo/features/organizer/widgets/hero_card.dart';
+import 'package:setzo/models/roadmap.dart';
 
 import '../../helpers/container.dart';
 import '../../helpers/fake_adapter.dart';
@@ -95,7 +95,7 @@ Future<Harness> pumpOrganizer(
     secure: {accessTokenKey: 'a', refreshTokenKey: 'r', roleKey: 'organizer'},
     overrides: [linkLauncherProvider.overrideWithValue(launcher)],
   );
-  await tester.pumpWidget(UncontrolledProviderScope(container: container, child: const SanchalanApp()));
+  await tester.pumpWidget(UncontrolledProviderScope(container: container, child: const SetzOApp()));
   await tester.pumpAndSettle();
   return Harness(container, adapter, launcher);
 }

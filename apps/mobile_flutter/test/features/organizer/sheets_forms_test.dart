@@ -2,15 +2,15 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sanchalan/dev/mock_data.dart';
-import 'package:sanchalan/features/organizer/event_form_view.dart';
-import 'package:sanchalan/features/organizer/profile_setup_view.dart';
-import 'package:sanchalan/features/organizer/sheets/budget_category_sheet.dart';
-import 'package:sanchalan/features/organizer/sheets/regenerate_sheet.dart';
-import 'package:sanchalan/features/organizer/sheets/sheet_scaffold.dart';
-import 'package:sanchalan/features/organizer/sheets/task_sheet.dart';
-import 'package:sanchalan/models/enums.dart';
-import 'package:sanchalan/shared/widgets/confirm_dialog.dart';
+import 'package:setzo/dev/mock_data.dart';
+import 'package:setzo/features/organizer/event_form_view.dart';
+import 'package:setzo/features/organizer/profile_setup_view.dart';
+import 'package:setzo/features/organizer/sheets/budget_category_sheet.dart';
+import 'package:setzo/features/organizer/sheets/regenerate_sheet.dart';
+import 'package:setzo/features/organizer/sheets/sheet_scaffold.dart';
+import 'package:setzo/features/organizer/sheets/task_sheet.dart';
+import 'package:setzo/models/enums.dart';
+import 'package:setzo/shared/widgets/confirm_dialog.dart';
 
 import '../../helpers/pump_screen.dart';
 

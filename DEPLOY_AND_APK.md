@@ -1,4 +1,4 @@
-# Sanchalan: Deploy (Neon + Render) and Build the Android APK
+# SetzO: Deploy (Neon + Render) and Build the Android APK
 
 > **Part 3 is out of date.** The Expo/EAS app was removed (it stays in git under the `rn-final` tag).
 > The mobile app is now Flutter in `apps/mobile_flutter`. Build a release APK with
@@ -18,7 +18,7 @@ before Part 3 (APK), because the APK has the backend URL baked in at build time.
 ## Part 1: Database on Neon
 
 1. Sign up at https://neon.tech and click **Create project**.
-   - Name: `sanchalan`
+   - Name: `setzo`
    - Postgres version: 16
    - Region: pick the one closest to your Render region (e.g. Singapore for
      India users). Use the same region for Render in Part 2.
@@ -42,7 +42,7 @@ before Part 3 (APK), because the APK has the backend URL baked in at build time.
    ```
 
 4. **Save the admin password.** The seed prints it once:
-   `email: admin@sanchalan.internal / password: <random>`. It is never shown
+   `email: admin@setzo.internal / password: <random>`. It is never shown
    again. If you lose it, delete the admin row in Neon's SQL Editor and re-run
    the seed.
 
@@ -66,7 +66,7 @@ git push origin main
 
    | Field | Value |
    |---|---|
-   | Name | `sanchalan-backend` |
+   | Name | `setzo-backend` |
    | Region | Same as Neon |
    | Branch | `main` |
    | Root Directory | *(leave blank, build from the repo root because of the pnpm workspace)* |
@@ -76,7 +76,7 @@ git push origin main
 3. **Build Command** (one line):
 
    ```bash
-   npm i -g pnpm && pnpm install --frozen-lockfile --prod=false && pnpm --filter @sanchalan/backend prisma:generate && pnpm --filter @sanchalan/backend build
+   npm i -g pnpm && pnpm install --frozen-lockfile --prod=false && pnpm --filter @setzo/backend prisma:generate && pnpm --filter @setzo/backend build
    ```
 
    - `--prod=false` is needed because `typescript` and `prisma` are needed at
@@ -87,7 +87,7 @@ git push origin main
 4. **Start Command**:
 
    ```bash
-   pnpm --filter @sanchalan/backend exec node dist/index.js
+   pnpm --filter @setzo/backend exec node dist/index.js
    ```
 
    Do not use `pnpm start`. It passes `--env-file=.env`, and there is no `.env`
@@ -171,9 +171,9 @@ Edit [apps/mobile/app.json](apps/mobile/app.json):
 ```json
 {
   "expo": {
-    "name": "Sanchalan",
+    "name": "SetzO",
     "android": {
-      "package": "com.sanchalan.app",
+      "package": "com.setzo.app",
       "adaptiveIcon": { "...": "keep as is" }
     }
   }
@@ -235,7 +235,7 @@ eas build -p android --profile preview
 - First run: EAS asks to generate an Android keystore. Answer **Yes**. EAS
   stores it for you, and you must keep using the same one for future updates.
 - The monorepo uses pnpm workspaces. EAS detects this, and
-  `@sanchalan/shared-types` is resolved from the repo. If the build fails at
+  `@setzo/shared-types` is resolved from the repo. If the build fails at
   the install step, check that `pnpm-lock.yaml` is committed.
 - The build takes 10 to 20 minutes. When it finishes you get a link and QR
   code to the `.apk`.
@@ -252,7 +252,7 @@ eas build -p android --profile preview
 - [ ] Request OTP works (SMS arrives, or read it in Render logs if `NODE_ENV` is not `production`).
 - [ ] Log in, then create an event, add tasks and a budget.
 - [ ] Close and reopen the app, and confirm the data is still there (it is coming from Neon).
-- [ ] Admin login works with `admin@sanchalan.internal` and the seeded password.
+- [ ] Admin login works with `admin@setzo.internal` and the seeded password.
 
 ---
 

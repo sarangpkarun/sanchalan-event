@@ -32,7 +32,7 @@ const _$EventTypeEnumMap = {
   EventType.wedding: 'wedding',
   EventType.birthday: 'birthday',
   EventType.corporate: 'corporate',
-  EventType.religious: 'religious',
+  EventType.funeral: 'funeral',
   EventType.engagementOnly: 'engagement_only',
   EventType.custom: 'custom',
 };

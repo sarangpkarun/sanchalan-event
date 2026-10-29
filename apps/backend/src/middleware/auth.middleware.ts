@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
-import type { AdminRole, AuthRole } from "@sanchalan/shared-types";
+import type { AdminRole, AuthRole } from "@setzo/shared-types";
 import { verifyAccessToken } from "../lib/jwt.js";
 import { prisma } from "../lib/prisma.js";
 

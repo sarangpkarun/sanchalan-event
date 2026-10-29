@@ -11,7 +11,8 @@ export type QuestionKind =
   | "text"
   | "number"
   | "date"
-  | "budget";
+  | "budget"
+  | "location";
 
 export type CoreField =
   | "name"
@@ -116,8 +117,8 @@ const coreStep = (): Step[] => [
 
 const regionQuestion = (required = true): Question => ({
   key: "region",
-  label: "Which city or region?",
-  kind: "text",
+  label: "Where is it?",
+  kind: "location",
   required,
   mapsTo: "region",
 });
@@ -142,13 +143,6 @@ const WEDDING: EventTypeProfile = {
           options: opts(["hindu", "Hindu"], ["muslim", "Muslim"], ["christian", "Christian"], ["sikh", "Sikh"], ["jain", "Jain"], ["interfaith", "Interfaith / civil"]),
         },
         { key: "community", label: "Community (optional)", kind: "text" },
-        {
-          key: "language",
-          label: "Main language of the ceremony",
-          kind: "single_select",
-          allowOther: true,
-          options: opts(["hindi", "Hindi"], ["english", "English"], ["marathi", "Marathi"], ["gujarati", "Gujarati"], ["bengali", "Bengali"], ["tamil", "Tamil"], ["telugu", "Telugu"], ["kannada", "Kannada"], ["malayalam", "Malayalam"], ["punjabi", "Punjabi"], ["odia", "Odia"], ["urdu", "Urdu"]),
-        },
       ],
     },
     {
@@ -242,34 +236,45 @@ const CORPORATE: EventTypeProfile = {
   ],
 };
 
-const RELIGIOUS: EventTypeProfile = {
-  eventType: "religious",
+const FUNERAL: EventTypeProfile = {
+  eventType: "funeral",
   version: 1,
   steps: [
-    nameStep("What is the ceremony called?"),
+    nameStep("In loving memory of..."),
     {
       id: "ceremony",
       title: "About the ceremony",
+      subtitle: "Take your time. We will keep this simple.",
       questions: [
         regionQuestion(),
         {
-          key: "religionOrTradition",
-          label: "Religion or tradition",
+          key: "ceremonyType",
+          label: "What kind of ceremony?",
           kind: "single_select",
-          required: true,
-          mapsTo: "religionOrTradition",
           allowOther: true,
-          options: opts(["hindu", "Hindu"], ["muslim", "Muslim"], ["christian", "Christian"], ["sikh", "Sikh"], ["jain", "Jain"]),
+          options: opts(["cremation", "Cremation"], ["burial", "Burial"], ["memorial", "Memorial service"], ["prayer_meet", "Prayer meet"]),
+        },
+        { key: "tradition", label: "Rites or tradition followed (optional)", kind: "text" },
+        { key: "needsOfficiant", label: "Need a priest or officiant?", kind: "single_select", options: opts(["yes", "Yes"], ["no", "No"]) },
+      ],
+    },
+    {
+      id: "arrangements",
+      title: "Arrangements",
+      questions: [
+        {
+          key: "foodPreference",
+          label: "Will refreshments or a meal be served?",
+          kind: "single_select",
+          options: opts(["none", "No"], ["refreshments", "Light refreshments"], ["meal", "A full meal"]),
         },
         {
-          key: "ceremonyType",
-          label: "Type of ceremony",
+          key: "relativesTravel",
+          label: "Will relatives need transport or a stay?",
           kind: "single_select",
-          allowOther: true,
-          options: opts(["puja", "Puja"], ["naming", "Naming ceremony"], ["housewarming", "Housewarming"], ["anniversary", "Anniversary"]),
+          options: opts(["yes", "Yes"], ["no", "No"], ["some", "Some of them"]),
         },
-        { key: "needsPriest", label: "Need a priest or officiant?", kind: "single_select", options: opts(["yes", "Yes"], ["no", "No"]) },
-        { key: "communityFeast", label: "Community feast?", kind: "single_select", options: opts(["yes", "Yes"], ["no", "No"]) },
+        { key: "flowers", label: "Flowers and tributes?", kind: "single_select", options: opts(["yes", "Yes"], ["no", "No"]) },
       ],
     },
     ...coreStep(),
@@ -320,7 +325,7 @@ const GENERIC: EventTypeProfile = {
   ],
 };
 
-const PROFILES: EventTypeProfile[] = [WEDDING, BIRTHDAY, CORPORATE, RELIGIOUS, ENGAGEMENT_ONLY, GENERIC];
+const PROFILES: EventTypeProfile[] = [WEDDING, BIRTHDAY, CORPORATE, FUNERAL, ENGAGEMENT_ONLY, GENERIC];
 
 /** Core field keys: a generated question may not reuse them. */
 export const CORE_QUESTION_KEYS: string[] = [

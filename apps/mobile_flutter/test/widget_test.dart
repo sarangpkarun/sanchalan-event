@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sanchalan/app.dart';
+import 'package:setzo/app.dart';
 
 import 'helpers/container.dart';
 import 'helpers/fake_adapter.dart';
@@ -11,10 +11,10 @@ void main() {
     final (container, _) = makeContainer(routes({}));
     await tester.pumpWidget(UncontrolledProviderScope(
       container: container,
-      child: const SanchalanApp(),
+      child: const SetzOApp(),
     ));
     await tester.pumpAndSettle();
     expect(find.byType(Scaffold), findsOneWidget);
-    expect(find.text('Plan every celebration, stress-free'), findsOneWidget);
+    expect(find.text('Every celebration begins with a plan.'), findsOneWidget);
   });
 }

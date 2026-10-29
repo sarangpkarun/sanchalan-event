@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sanchalan/app.dart';
-import 'package:sanchalan/core/connectivity.dart';
+import 'package:setzo/app.dart';
+import 'package:setzo/core/connectivity.dart';
 
 import '../helpers/container.dart';
 import '../helpers/fake_adapter.dart';
@@ -24,7 +24,7 @@ Future<void> pumpApp(WidgetTester tester, FakeConnectivity c) async {
     routes({}),
     overrides: [connectivityServiceProvider.overrideWithValue(c)],
   );
-  await tester.pumpWidget(UncontrolledProviderScope(container: container, child: const SanchalanApp()));
+  await tester.pumpWidget(UncontrolledProviderScope(container: container, child: const SetzOApp()));
   await tester.pumpAndSettle();
 }
 
@@ -40,7 +40,7 @@ void main() {
     await pumpApp(tester, FakeConnectivity(false));
     expect(find.text(message), findsOneWidget);
     // The app underneath is still usable.
-    expect(find.text('Plan every celebration, stress-free'), findsOneWidget);
+    expect(find.text('Every celebration begins with a plan.'), findsOneWidget);
   });
 
   testWidgets('it follows the connection coming and going', (tester) async {

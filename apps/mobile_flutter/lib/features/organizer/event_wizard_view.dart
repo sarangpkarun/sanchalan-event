@@ -9,15 +9,25 @@ import '../../models/event_profile.dart';
 import '../../shared/widgets/app_text_field.dart';
 import '../../shared/widgets/bottom_action_bar.dart';
 import '../../shared/widgets/brand_mark.dart';
+import '../../shared/widgets/location_picker.dart';
 import '../../shared/widgets/primary_button.dart';
 import 'event_draft.dart';
 import 'sheets/sheet_scaffold.dart' show parseAmount;
+
+const _typeHints = {
+  EventType.wedding: 'Rituals, functions and families coming together',
+  EventType.birthday: 'A party for a little one or a big milestone',
+  EventType.corporate: 'Conference, offsite, launch or team party',
+  EventType.funeral: 'A gentle send-off, with care for every detail',
+  EventType.engagementOnly: 'The ring ceremony and the celebration around it',
+  EventType.custom: 'Something else. Tell us and we will build the plan',
+};
 
 const _typeIcons = {
   EventType.wedding: Icons.favorite_border,
   EventType.birthday: Icons.cake_outlined,
   EventType.corporate: Icons.business_center_outlined,
-  EventType.religious: Icons.temple_hindu_outlined,
+  EventType.funeral: Icons.local_florist_outlined,
   EventType.engagementOnly: Icons.diamond_outlined,
   EventType.custom: Icons.tune,
 };
@@ -95,6 +105,7 @@ class _EventWizardViewState extends State<EventWizardView> {
   // 0 = type picker, 1 = describe (custom only), then the profile's steps.
   late int _step = _restoreStep();
   late final Map<String, Object?> _answers = {...?widget.draft?.answers};
+  PickedLocation? _location;
   bool _showErrors = false;
   bool _submitting = false;
   String? _error;
@@ -284,6 +295,7 @@ class _EventWizardViewState extends State<EventWizardView> {
         }
       }
     }
+    if (_location != null) details['location'] = _location!.toJson();
     final name = core['name'], region = core['region'], date = core['primaryDate'];
     final guests = core['guestCountEstimate'], budget = core['totalBudget'], tier = core['budgetTier'];
     if (_type == null ||
@@ -371,9 +383,9 @@ class _EventWizardViewState extends State<EventWizardView> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('What are you celebrating?', style: text.headlineSmall),
+        Text('What is the event?', style: text.headlineSmall),
         const SizedBox(height: AppSpace.xs),
-        Text('We will ask only what matters for it.', style: text.bodyMedium),
+        Text('Tap the one that fits. We will ask only what matters for it.', style: text.bodyMedium),
         const SizedBox(height: AppSpace.xl),
         for (final t in EventType.values)
           Padding(
@@ -381,6 +393,7 @@ class _EventWizardViewState extends State<EventWizardView> {
             child: _ChoiceCard(
               icon: _typeIcons[t]!,
               label: eventTypeLabel(t),
+              hint: _typeHints[t],
               selected: _type == t,
               onTap: () => _pickType(t),
             ),
@@ -444,6 +457,7 @@ class _EventWizardViewState extends State<EventWizardView> {
               value: _answers[q.key],
               errorText: _errorFor(q),
               today: widget.today,
+              onLocationPicked: (l) => _location = l,
               onChanged: (v) => setState(() {
                 if (_isBlank(v)) {
                   _answers.remove(q.key);
@@ -477,10 +491,11 @@ class _Progress extends StatelessWidget {
 }
 
 class _ChoiceCard extends StatelessWidget {
-  const _ChoiceCard({required this.icon, required this.label, required this.selected, required this.onTap});
+  const _ChoiceCard({required this.icon, required this.label, this.hint, required this.selected, required this.onTap});
 
   final IconData icon;
   final String label;
+  final String? hint;
   final bool selected;
   final VoidCallback onTap;
 
@@ -505,7 +520,16 @@ class _ChoiceCard extends StatelessWidget {
             children: [
               Icon(icon, color: selected ? scheme.primary : null),
               const SizedBox(width: AppSpace.l),
-              Expanded(child: Text(label, style: Theme.of(context).textTheme.titleMedium)),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(label, style: Theme.of(context).textTheme.titleMedium),
+                    if (hint != null)
+                      Text(hint!, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.inkMuted)),
+                  ],
+                ),
+              ),
               if (selected) Icon(Icons.check_circle, color: scheme.primary),
             ],
           ),
@@ -525,7 +549,11 @@ class QuestionField extends StatefulWidget {
     required this.onChanged,
     this.errorText,
     this.today,
+    this.onLocationPicked,
   });
+
+  /// Called when a place is chosen on the map (location questions only).
+  final ValueChanged<PickedLocation>? onLocationPicked;
 
   final Question question;
   final Object? value;
@@ -571,6 +599,14 @@ class _QuestionFieldState extends State<QuestionField> {
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
     switch (_q.kind) {
+      case QuestionKind.location:
+        return LocationField(
+          label: _q.label,
+          controller: _controller,
+          errorText: widget.errorText,
+          onChanged: widget.onChanged,
+          onPicked: (l) => widget.onLocationPicked?.call(l),
+        );
       case QuestionKind.text:
         return AppTextField(
           label: _q.label,

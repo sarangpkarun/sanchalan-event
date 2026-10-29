@@ -1,7 +1,7 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sanchalan/core/auth_storage.dart';
-import 'package:sanchalan/models/enums.dart';
+import 'package:setzo/core/auth_storage.dart';
+import 'package:setzo/models/enums.dart';
 
 void main() {
   late AuthStorage storage;

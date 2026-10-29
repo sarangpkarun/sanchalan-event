@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sanchalan/dev/mock_data.dart';
-import 'package:sanchalan/features/organizer/event_stats.dart';
-import 'package:sanchalan/models/enums.dart';
-import 'package:sanchalan/models/roadmap.dart';
+import 'package:setzo/dev/mock_data.dart';
+import 'package:setzo/features/organizer/event_stats.dart';
+import 'package:setzo/models/enums.dart';
+import 'package:setzo/models/roadmap.dart';
 
 void main() {
   final today = DateTime(2026, 10, 10);

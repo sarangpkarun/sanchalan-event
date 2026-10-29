@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sanchalan/features/vendor/vendor_providers.dart';
-import 'package:sanchalan/features/vendor/vendor_repository.dart';
-import 'package:sanchalan/models/enums.dart';
-import 'package:sanchalan/models/vendor.dart';
+import 'package:setzo/features/vendor/vendor_providers.dart';
+import 'package:setzo/features/vendor/vendor_repository.dart';
+import 'package:setzo/models/enums.dart';
+import 'package:setzo/models/vendor.dart';
 
 import '../../helpers/container.dart';
 import '../../helpers/fake_adapter.dart';

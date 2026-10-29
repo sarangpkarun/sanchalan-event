@@ -27,7 +27,7 @@ export function mockApi(me: AdminMe, routes: Record<string, unknown> = {}) {
 }
 
 export function renderApp(ui: ReactElement, path = "/") {
-  localStorage.setItem("sanchalan.admin.refreshToken", "r");
+  localStorage.setItem("setzo.admin.refreshToken", "r");
   return render(
     <MemoryRouter initialEntries={[path]}>
       <ToastProvider>

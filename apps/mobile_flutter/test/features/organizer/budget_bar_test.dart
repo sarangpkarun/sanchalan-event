@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sanchalan/core/theme/app_colors.dart';
-import 'package:sanchalan/dev/mock_data.dart';
-import 'package:sanchalan/features/organizer/event_stats.dart';
-import 'package:sanchalan/features/organizer/widgets/budget_widgets.dart';
+import 'package:setzo/core/theme/app_colors.dart';
+import 'package:setzo/dev/mock_data.dart';
+import 'package:setzo/features/organizer/event_stats.dart';
+import 'package:setzo/features/organizer/widgets/budget_widgets.dart';
 
 import '../../helpers/pump_screen.dart';
 

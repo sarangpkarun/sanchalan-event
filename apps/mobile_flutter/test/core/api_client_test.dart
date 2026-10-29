@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sanchalan/core/api_client.dart';
-import 'package:sanchalan/core/auth_storage.dart';
+import 'package:setzo/core/api_client.dart';
+import 'package:setzo/core/auth_storage.dart';
 
 import '../helpers/fake_adapter.dart';
 

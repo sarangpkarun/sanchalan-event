@@ -2,9 +2,9 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../models/enums.dart';
 
-const accessTokenKey = 'sanchalan.accessToken';
-const refreshTokenKey = 'sanchalan.refreshToken';
-const roleKey = 'sanchalan.role';
+const accessTokenKey = 'setzo.accessToken';
+const refreshTokenKey = 'setzo.refreshToken';
+const roleKey = 'setzo.role';
 
 /// Secure storage for the session: access token, refresh token and role.
 /// Same keys as the React Native app's authStorage.ts.

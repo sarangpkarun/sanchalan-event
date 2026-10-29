@@ -8,7 +8,7 @@ export type ProposeCategoryInput = z.infer<typeof proposeCategorySchema>;
 
 export const proposalIdParamSchema = z.object({ id: z.string().uuid() });
 
-const eventTypeSchema = z.enum(["wedding", "birthday", "corporate", "religious", "engagement_only", "custom"]);
+const eventTypeSchema = z.enum(["wedding", "birthday", "corporate", "funeral", "engagement_only", "custom"]);
 
 const templateSchema = z.object({
   taskKey: z.string().trim().regex(/^[a-z0-9_]+$/).max(60),

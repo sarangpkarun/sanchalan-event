@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { vendorCategoryLabel } from "@sanchalan/shared-types";
+import { vendorCategoryLabel } from "@setzo/shared-types";
 import { api } from "../lib/api.ts";
 import { useAuth } from "../lib/auth-context.tsx";
 import { errorMessage } from "../lib/format.ts";

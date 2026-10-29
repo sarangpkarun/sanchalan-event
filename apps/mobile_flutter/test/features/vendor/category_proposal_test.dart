@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sanchalan/dev/mock_data.dart';
-import 'package:sanchalan/features/vendor/vendor_profile_editor_view.dart';
-import 'package:sanchalan/models/enums.dart';
-import 'package:sanchalan/models/vendor.dart';
-import 'package:sanchalan/models/vendor_labels.dart';
+import 'package:setzo/dev/mock_data.dart';
+import 'package:setzo/features/vendor/vendor_profile_editor_view.dart';
+import 'package:setzo/models/enums.dart';
+import 'package:setzo/models/vendor.dart';
+import 'package:setzo/models/vendor_labels.dart';
 
 import '../../helpers/pump_screen.dart';
 

@@ -1,4 +1,4 @@
-import type { VendorPriceTier } from "@sanchalan/shared-types";
+import type { VendorPriceTier } from "@setzo/shared-types";
 import { prisma } from "../lib/prisma.js";
 import { AppError } from "../lib/errors.js";
 import { VENDOR_WITH_PORTFOLIO_INCLUDE } from "./vendor-query.helpers.js";

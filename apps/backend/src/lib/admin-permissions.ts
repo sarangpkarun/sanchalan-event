@@ -1,4 +1,4 @@
-import type { AdminRole } from "@sanchalan/shared-types";
+import type { AdminRole } from "@setzo/shared-types";
 
 /** Every admin write is one of these. Reads are open to all admin roles unless noted. */
 export type AdminAction =

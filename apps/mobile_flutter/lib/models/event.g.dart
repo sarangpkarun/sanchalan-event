@@ -98,6 +98,7 @@ EventGroup _$EventGroupFromJson(Map<String, dynamic> json) => EventGroup(
           ?.map((e) => TaskWithDependencies.fromJson(e as Map<String, dynamic>))
           .toList() ??
       [],
+  myRole: json['myRole'] as String?,
 );
 
 Map<String, dynamic> _$EventGroupToJson(
@@ -115,6 +116,7 @@ Map<String, dynamic> _$EventGroupToJson(
   'primaryDate': instance.primaryDate.toIso8601String(),
   'status': _$EventGroupStatusEnumMap[instance.status]!,
   'createdAt': instance.createdAt.toIso8601String(),
+  'myRole': instance.myRole,
   'subEvents': instance.subEvents.map((e) => e.toJson()).toList(),
   'budgetCategories': instance.budgetCategories.map((e) => e.toJson()).toList(),
   'tasks': instance.tasks.map((e) => e.toJson()).toList(),
@@ -124,7 +126,7 @@ const _$EventTypeEnumMap = {
   EventType.wedding: 'wedding',
   EventType.birthday: 'birthday',
   EventType.corporate: 'corporate',
-  EventType.religious: 'religious',
+  EventType.funeral: 'funeral',
   EventType.engagementOnly: 'engagement_only',
   EventType.custom: 'custom',
 };

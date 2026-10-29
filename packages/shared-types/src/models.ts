@@ -1,5 +1,5 @@
 // TypeScript interfaces mirroring every table in apps/backend/prisma/schema.prisma
-// (Sanchalan — Complete Data Model v1.0). Field names are camelCase, matching
+// (SetzO — Complete Data Model v1.0). Field names are camelCase, matching
 // what the Prisma client / API layer serializes. Dates are ISO strings (as
 // they cross the wire over JSON), decimals are `number`.
 //
@@ -13,6 +13,7 @@ import type {
   BudgetTier,
   DocumentType,
   EventGroupRole,
+  MemberStatus,
   EventGroupStatus,
   EventType,
   NotificationChannel,
@@ -117,7 +118,19 @@ export interface RolePermission {
   eventGroupId: string;
   userId: string;
   role: EventGroupRole;
+  status: MemberStatus;
   invitedAt: string;
+}
+
+export interface EventInvite {
+  id: string;
+  code: string;
+  eventGroupId: string;
+  role: EventGroupRole;
+  createdBy: string;
+  expiresAt: string;
+  revokedAt: string | null;
+  createdAt: string;
 }
 
 // =============================================================================

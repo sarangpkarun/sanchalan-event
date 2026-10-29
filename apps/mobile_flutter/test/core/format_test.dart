@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sanchalan/core/format.dart';
-import 'package:sanchalan/models/enums.dart';
+import 'package:setzo/core/format.dart';
+import 'package:setzo/models/enums.dart';
 
 void main() {
   final today = DateTime(2026, 10, 10, 18, 30); // time of day must not matter

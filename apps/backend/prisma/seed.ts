@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
-const SEED_ADMIN_EMAIL = "admin@sanchalan.internal";
+const SEED_ADMIN_EMAIL = "admin@setzo.internal";
 const BCRYPT_ROUNDS = 10;
 
 const CATEGORY_KEYS = [

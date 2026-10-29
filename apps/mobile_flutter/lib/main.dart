@@ -11,5 +11,5 @@ void main() {
     throw StateError('Build without API_URL: pass --dart-define=API_URL=https://...');
   }
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  runApp(const ProviderScope(child: SanchalanApp()));
+  runApp(const ProviderScope(child: SetzOApp()));
 }

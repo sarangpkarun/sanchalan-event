@@ -1,4 +1,4 @@
-package com.sanchalan.app
+package com.setzo.app
 
 import io.flutter.embedding.android.FlutterActivity
 

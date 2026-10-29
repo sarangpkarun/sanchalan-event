@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { randomUUID } from "node:crypto";
-import type { AdminRole, AuthRole } from "@sanchalan/shared-types";
+import type { AdminRole, AuthRole } from "@setzo/shared-types";
 import { env } from "./env.js";
 
 export interface AccessTokenPayload {

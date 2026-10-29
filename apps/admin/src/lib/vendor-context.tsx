@@ -4,7 +4,7 @@ import type {
   VendorCategory,
   VendorPortfolioItem,
   VendorReviewLog,
-} from "@sanchalan/shared-types";
+} from "@setzo/shared-types";
 import { api } from "./api.ts";
 
 export interface VendorWithReview extends Vendor {

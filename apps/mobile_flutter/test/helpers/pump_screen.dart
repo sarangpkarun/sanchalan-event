@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sanchalan/core/theme/app_theme.dart';
+import 'package:setzo/core/theme/app_theme.dart';
 
 /// Pumps [child] inside the app theme at a given logical size and text scale.
 Future<void> pumpScreen(

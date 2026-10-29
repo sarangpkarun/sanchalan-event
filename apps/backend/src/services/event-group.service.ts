@@ -1,5 +1,11 @@
 import type { EventGroup, Organizer, Prisma } from "@prisma/client";
 import { prisma } from "../lib/prisma.js";
+import {
+  getEventAccess,
+  requireBudgetEdit,
+  requireEdit,
+  requireOwner,
+} from "./event-access.service.js";
 import { AppError } from "../lib/errors.js";
 import { toNumber, toDateOnly } from "../lib/serialize.js";
 import { computeBudgetAllocations } from "../config/budget-splits.js";
@@ -22,21 +28,20 @@ export function assertProfileComplete(organizer: Organizer): void {
   }
 }
 
-function assertOwnership<T extends { organizerId: string } | null>(
-  eventGroup: T,
-  organizerId: string
-): asserts eventGroup is NonNullable<T> {
-  if (!eventGroup) throw new AppError(404, "Event not found");
-  if (eventGroup.organizerId !== organizerId) throw new AppError(403, "Forbidden");
-}
-
+/** The creator only (deleting an event). */
 export async function getOwnedEventGroupOrThrow(
   organizerId: string,
   eventGroupId: string
 ): Promise<EventGroup> {
-  const eventGroup = await prisma.eventGroup.findUnique({ where: { id: eventGroupId } });
-  assertOwnership(eventGroup, organizerId);
-  return eventGroup;
+  return (await requireOwner(organizerId, eventGroupId)).eventGroup;
+}
+
+/** Owner, approver or editor (changing tasks, the roadmap and event details). */
+export async function getEditableEventGroupOrThrow(
+  organizerId: string,
+  eventGroupId: string
+): Promise<EventGroup> {
+  return (await requireEdit(organizerId, eventGroupId)).eventGroup;
 }
 
 function computeBudgetWarning(
@@ -167,12 +172,18 @@ export async function createEventGroup(organizerId: string, input: CreateEventGr
   });
 }
 
+/** Events I created plus events I collaborate on (approved members only), each with `myRole`. */
 export async function listMyEventGroups(organizerId: string) {
   const rows = await prisma.eventGroup.findMany({
-    where: { organizerId },
-    include: { subEvents: true },
+    where: {
+      OR: [{ organizerId }, { rolePermissions: { some: { userId: organizerId, status: "active" } } }],
+    },
+    include: { subEvents: true, rolePermissions: { where: { userId: organizerId } } },
   });
-  return rows.map(serializeEventGroup);
+  return rows.map(({ rolePermissions, ...eg }) => ({
+    ...serializeEventGroup(eg),
+    myRole: eg.organizerId === organizerId ? "owner" : (rolePermissions[0]?.role ?? "viewer"),
+  }));
 }
 
 export async function getEventGroupById(organizerId: string, id: string) {
@@ -184,8 +195,9 @@ export async function getEventGroupById(organizerId: string, id: string) {
       tasks: { include: { taskCategory: true, dependentLinks: true } },
     },
   });
-  assertOwnership(row, organizerId);
-  return serializeEventGroupWithRoadmap(row);
+  if (!row) throw new AppError(404, "Event not found");
+  const { role } = await getEventAccess(organizerId, id);
+  return { ...serializeEventGroupWithRoadmap(row), myRole: role };
 }
 
 export async function updateBudgetCategory(
@@ -194,7 +206,7 @@ export async function updateBudgetCategory(
   categoryId: string,
   input: UpdateBudgetCategoryInput
 ) {
-  const eventGroup = await getOwnedEventGroupOrThrow(organizerId, eventGroupId);
+  const eventGroup = await (await requireBudgetEdit(organizerId, eventGroupId)).eventGroup;
 
   const category = await prisma.budgetCategory.findUnique({ where: { id: categoryId } });
   // 404 even if categoryId exists but belongs to a different EventGroup (this
@@ -230,7 +242,7 @@ export async function createBudgetCategory(
   eventGroupId: string,
   input: CreateBudgetCategoryInput
 ) {
-  const eventGroup = await getOwnedEventGroupOrThrow(organizerId, eventGroupId);
+  const eventGroup = await (await requireBudgetEdit(organizerId, eventGroupId)).eventGroup;
 
   const existing = await prisma.budgetCategory.findFirst({
     where: { eventGroupId, categoryKey: input.categoryKey },
@@ -256,7 +268,7 @@ export async function deleteBudgetCategory(
   eventGroupId: string,
   categoryId: string
 ) {
-  const eventGroup = await getOwnedEventGroupOrThrow(organizerId, eventGroupId);
+  const eventGroup = await (await requireBudgetEdit(organizerId, eventGroupId)).eventGroup;
 
   const category = await prisma.budgetCategory.findUnique({ where: { id: categoryId } });
   if (!category || category.eventGroupId !== eventGroupId) {
@@ -291,7 +303,10 @@ export async function updateEventGroup(
   eventGroupId: string,
   input: UpdateEventGroupInput
 ) {
-  const current = await getOwnedEventGroupOrThrow(organizerId, eventGroupId);
+  const current =
+    input.totalBudget !== undefined || input.budgetTier !== undefined
+      ? (await requireBudgetEdit(organizerId, eventGroupId)).eventGroup
+      : await getEditableEventGroupOrThrow(organizerId, eventGroupId);
 
   const data: Prisma.EventGroupUpdateInput = {};
   if (input.name !== undefined) data.name = input.name;
@@ -401,6 +416,7 @@ export async function deleteEventGroup(organizerId: string, eventGroupId: string
     await tx.document.deleteMany({ where: inEvent });
     await tx.roadmapGenerationLog.deleteMany({ where: inEvent });
     await tx.rolePermission.deleteMany({ where: inEvent });
+    await tx.eventInvite.deleteMany({ where: inEvent });
     await tx.subEvent.deleteMany({ where: inEvent });
     await tx.eventGroup.delete({ where: { id: eventGroupId } });
   });

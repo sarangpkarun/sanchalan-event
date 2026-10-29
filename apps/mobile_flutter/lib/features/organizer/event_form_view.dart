@@ -6,6 +6,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../models/enums.dart';
 import '../../models/event.dart';
+import '../../shared/widgets/location_picker.dart';
 import '../../shared/widgets/app_text_field.dart';
 import '../../shared/widgets/bottom_action_bar.dart';
 import '../../shared/widgets/primary_button.dart';
@@ -35,7 +36,7 @@ const _typeIcons = {
   EventType.wedding: Icons.favorite_border,
   EventType.birthday: Icons.cake_outlined,
   EventType.corporate: Icons.business_center_outlined,
-  EventType.religious: Icons.temple_hindu_outlined,
+  EventType.funeral: Icons.local_florist_outlined,
   EventType.engagementOnly: Icons.diamond_outlined,
   EventType.custom: Icons.tune,
 };
@@ -172,7 +173,7 @@ class _EventFormViewState extends State<EventFormView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (!_isEdit) ...[
-                      Text('What are you celebrating?', style: text.titleSmall),
+                      Text('What is the event?', style: text.titleSmall),
                       const SizedBox(height: AppSpace.s),
                       Wrap(
                         spacing: AppSpace.s,
@@ -205,13 +206,12 @@ class _EventFormViewState extends State<EventFormView> {
                         value: '${eventTypeLabel(_type)} · ${widget.initial!.region}',
                       )
                     else
-                      AppTextField(
+                      LocationField(
                         label: 'City or region',
                         controller: _region,
-                        hint: 'e.g. Pune',
                         errorText: _regionError,
-                        textInputAction: TextInputAction.next,
                         onChanged: (_) => setState(() {}),
+                        onPicked: (_) {},
                       ),
                     const SizedBox(height: AppSpace.l),
                     Text('Date', style: text.titleSmall),

@@ -1,4 +1,4 @@
-import { vendorCategoryLabel } from "@sanchalan/shared-types";
+import { vendorCategoryLabel } from "@setzo/shared-types";
 import { useApi } from "../lib/useApi.ts";
 import { ErrorRetry } from "../components/ErrorRetry.tsx";
 import { usePageTitle } from "../components/usePageTitle.ts";

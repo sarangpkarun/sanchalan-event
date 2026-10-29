@@ -75,6 +75,7 @@ class EventGroup {
     required this.subEvents,
     required this.budgetCategories,
     required this.tasks,
+    this.myRole,
   });
   factory EventGroup.fromJson(Map<String, dynamic> json) => _$EventGroupFromJson(json);
   final String id;
@@ -91,6 +92,10 @@ class EventGroup {
   final EventGroupStatus status;
   final DateTime createdAt;
 
+  /// The signed-in organizer's role on this event: owner, approver, editor or viewer.
+  /// Present on list and get responses; null elsewhere (treated as owner).
+  final String? myRole;
+
   /// Present on list, create, get and update responses.
   @JsonKey(defaultValue: <SubEvent>[])
   final List<SubEvent> subEvents;
@@ -103,6 +108,9 @@ class EventGroup {
   @JsonKey(defaultValue: <TaskWithDependencies>[])
   final List<TaskWithDependencies> tasks;
   Map<String, dynamic> toJson() => _$EventGroupToJson(this);
+
+  bool get isOwner => myRole == null || myRole == 'owner';
+  bool get canEdit => myRole != 'viewer';
 }
 
 @JsonSerializable(includeIfNull: false)

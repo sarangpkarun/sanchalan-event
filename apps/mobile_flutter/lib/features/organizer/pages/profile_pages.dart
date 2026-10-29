@@ -77,6 +77,7 @@ class OrganizerProfilePage extends ConsumerWidget {
     }
     return OrganizerProfileView(
       organizer: data.organizer,
+      events: data.eventGroups,
       onEdit: () => context.push(AppPaths.profileEdit),
       onSignOut: () async {
         final yes = await showConfirmDialog(

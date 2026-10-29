@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../shared/widgets/bottom_action_bar.dart';
+import '../../core/theme/app_typography.dart';
 import '../../shared/widgets/brand_mark.dart';
-import '../../shared/widgets/primary_button.dart';
+import 'celebration_backdrop.dart';
 
-/// First screen for a signed-out user.
+/// Hero tag shared with the splash so the symbol glides into place.
+const brandHeroTag = 'setzo-brand-mark';
+
+/// First screen for a signed-out user: the symbol, one line, one round button.
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key, required this.onGetStarted, this.onDebugPreviews});
 
@@ -21,120 +24,51 @@ class WelcomeScreen extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          // Soft decorative circles, purely visual.
-          const Positioned(
-            top: -90,
-            right: -70,
-            child: _Blob(size: 260, color: AppColors.primaryContainer),
-          ),
-          const Positioned(
-            top: 120,
-            left: -110,
-            child: _Blob(size: 200, color: AppColors.goldContainer),
-          ),
-          const Positioned(
-            bottom: 120,
-            right: -90,
-            child: _Blob(size: 220, color: AppColors.maroonContainer),
-          ),
+          const CelebrationBackdrop(),
           if (onDebugPreviews != null)
             Positioned(
               top: 0,
               right: 0,
-              child: SafeArea(
-                child: TextButton(onPressed: onDebugPreviews, child: const Text('Previews')),
-              ),
+              child: SafeArea(child: TextButton(onPressed: onDebugPreviews, child: const Text('Previews'))),
             ),
           SafeArea(
-            child: Column(
-              children: [
-                Expanded(
-                  child: LayoutBuilder(
-                    builder: (context, constraints) => SingleChildScrollView(
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(
-                          minHeight: constraints.maxHeight,
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: AppSpace.xl,
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              const SizedBox(height: AppSpace.xl),
-                              const Center(
-                                child: BrandMark(size: 88, wordmark: true),
-                              ),
-                              const SizedBox(height: AppSpace.xl),
-                              Semantics(
-                                header: true,
-                                child: Text(
-                                  'Plan every celebration, stress-free',
-                                  textAlign: TextAlign.center,
-                                  style: text.headlineMedium?.copyWith(
-                                    color: AppColors.maroon,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: AppSpace.m),
-                              Text(
-                                'A step-by-step plan, your budget and trusted vendors, all in one place.',
-                                textAlign: TextAlign.center,
-                                style: text.bodyLarge?.copyWith(
-                                  color: AppColors.inkMuted,
-                                ),
-                              ),
-                              const SizedBox(height: AppSpace.xl),
-                              const Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Expanded(
-                                    child: _Feature(
-                                      icon: Icons.checklist_rounded,
-                                      label: 'Smart roadmap',
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: _Feature(
-                                      icon:
-                                          Icons.account_balance_wallet_outlined,
-                                      label: 'Budget tracker',
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: _Feature(
-                                      icon: Icons.storefront_outlined,
-                                      label: 'Trusted vendors',
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: AppSpace.xl),
-                            ],
+            child: LayoutBuilder(
+              builder: (context, constraints) => SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: AppSpace.xl),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const SizedBox(height: 96),
+                        const Hero(tag: brandHeroTag, child: BrandMark(size: 96)),
+                        const SizedBox(height: AppSpace.m),
+                        Text(
+                          'SetzO',
+                          style: text.displaySmall?.copyWith(
+                            fontFamily: AppFonts.display,
+                            color: AppColors.maroon,
+                            letterSpacing: 1,
                           ),
                         ),
-                      ),
+                        const SizedBox(height: AppSpace.xl),
+                        Semantics(
+                          header: true,
+                          child: Text(
+                            'Every celebration begins with a plan.',
+                            textAlign: TextAlign.center,
+                            style: text.titleLarge?.copyWith(color: AppColors.maroon, fontStyle: FontStyle.italic),
+                          ),
+                        ),
+                        const SizedBox(height: AppSpace.xxl),
+                        _LetsGoButton(onPressed: onGetStarted),
+                        const SizedBox(height: 72),
+                      ],
                     ),
                   ),
                 ),
-                BottomActionBar(
-                  children: [
-                    PrimaryButton(
-                      label: 'Get started',
-                      icon: Icons.arrow_forward,
-                      onPressed: onGetStarted,
-                    ),
-                    const SizedBox(height: AppSpace.s),
-                    Text(
-                      'For families, planners and vendors',
-                      textAlign: TextAlign.center,
-                      style: text.bodySmall,
-                    ),
-                  ],
-                ),
-              ],
+              ),
             ),
           ),
         ],
@@ -143,56 +77,32 @@ class WelcomeScreen extends StatelessWidget {
   }
 }
 
-class _Blob extends StatelessWidget {
-  const _Blob({required this.size, required this.color});
+class _LetsGoButton extends StatelessWidget {
+  const _LetsGoButton({required this.onPressed});
 
-  final double size;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) => ExcludeSemantics(
-    child: Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: color.withValues(alpha: 0.7),
-      ),
-    ),
-  );
-}
-
-class _Feature extends StatelessWidget {
-  const _Feature({required this.icon, required this.label});
-
-  final IconData icon;
-  final String label;
+  final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: 56,
-          height: 56,
-          decoration: BoxDecoration(
-            color: AppColors.surface,
-            shape: BoxShape.circle,
-            border: Border.all(color: AppColors.outline),
-            boxShadow: AppShadows.soft,
+    return Semantics(
+      button: true,
+      label: "Let's go",
+      child: ExcludeSemantics(
+        child: Material(
+          color: AppColors.primary,
+          shape: const CircleBorder(),
+          elevation: 6,
+          shadowColor: AppColors.primary.withValues(alpha: 0.5),
+          child: InkWell(
+            customBorder: const CircleBorder(),
+            onTap: onPressed,
+            child: const SizedBox.square(
+              dimension: 72,
+              child: Icon(Icons.arrow_forward_rounded, color: AppColors.onPrimary, size: 34),
+            ),
           ),
-          child: Icon(icon, color: AppColors.primary),
         ),
-        const SizedBox(height: AppSpace.s),
-        Text(
-          label,
-          textAlign: TextAlign.center,
-          style: Theme.of(
-            context,
-          ).textTheme.labelMedium?.copyWith(color: AppColors.ink),
-        ),
-      ],
+      ),
     );
   }
 }

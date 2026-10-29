@@ -61,7 +61,7 @@ class VendorDashboardView extends StatelessWidget {
           children: [
             BrandMark(size: 28),
             SizedBox(width: AppSpace.s),
-            Flexible(child: Text('Sanchalan', overflow: TextOverflow.ellipsis)),
+            Flexible(child: Text('SetzO', overflow: TextOverflow.ellipsis)),
           ],
         ),
         actions: [
@@ -273,7 +273,7 @@ class _Body extends StatelessWidget {
               icon: Icons.pause_circle_outline,
               title: 'Your listing is paused',
               message:
-                  'Your profile is hidden from families while our team looks into it. Please contact Sanchalan support to sort this out.',
+                  'Your profile is hidden from families while our team looks into it. Please contact SetzO support to sort this out.',
               actionLabel: 'Contact support',
               onAction: view.onContactSupport,
             ),

@@ -1,12 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sanchalan/core/auth_storage.dart';
-import 'package:sanchalan/core/providers.dart';
-import 'package:sanchalan/features/auth/auth_controller.dart';
-import 'package:sanchalan/features/auth/auth_state.dart';
-import 'package:sanchalan/features/organizer/organizer_providers.dart';
-import 'package:sanchalan/models/auth.dart';
-import 'package:sanchalan/models/enums.dart';
+import 'package:setzo/core/auth_storage.dart';
+import 'package:setzo/core/providers.dart';
+import 'package:setzo/features/auth/auth_controller.dart';
+import 'package:setzo/features/auth/auth_state.dart';
+import 'package:setzo/features/organizer/organizer_providers.dart';
+import 'package:setzo/models/auth.dart';
+import 'package:setzo/models/enums.dart';
 
 import '../../helpers/container.dart';
 import '../../helpers/fake_adapter.dart';

@@ -8,6 +8,7 @@ import '../../features/auth/otp_args.dart';
 import '../../features/auth/otp_page.dart';
 import '../../features/auth/phone_page.dart';
 import '../../features/auth/unsupported_role_screen.dart';
+import '../../features/auth/splash_screen.dart';
 import '../../features/auth/welcome_screen.dart';
 import '../../features/organizer/organizer_providers.dart';
 import '../../features/organizer/pages/event_detail_page.dart';
@@ -53,7 +54,7 @@ final routerProvider = Provider<GoRouter>((ref) {
     refreshListenable: refresh,
     redirect: (context, state) => redirectFor(state.uri.toString(), ref.read(guardStateProvider)),
     routes: [
-      GoRoute(path: AppPaths.splash, builder: (_, _) => const DataLoadingScreen()),
+      GoRoute(path: AppPaths.splash, builder: (_, _) => const SplashScreen()),
       GoRoute(path: AppPaths.unsupportedRole, builder: (_, _) => const UnsupportedRoleScreen()),
 
       // Design previews: debug builds only

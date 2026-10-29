@@ -112,7 +112,7 @@ class _PhoneScreenState extends State<PhoneScreen> {
                       ),
                     ),
                     const SizedBox(height: AppSpace.s),
-                    Text('How will you use Sanchalan?', style: text.bodyLarge),
+                    Text('How will you use SetzO?', style: text.bodyLarge),
                     const SizedBox(height: AppSpace.l),
                     _RoleCard(
                       icon: Icons.celebration_outlined,

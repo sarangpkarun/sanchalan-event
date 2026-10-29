@@ -1,5 +1,5 @@
 import { Link, useParams } from "react-router-dom";
-import { vendorCategoryLabel } from "@sanchalan/shared-types";
+import { vendorCategoryLabel } from "@setzo/shared-types";
 import { formatDate, formatDateTime, formatMoney } from "../lib/format.ts";
 import { eventTypeLabel } from "../lib/event-types.ts";
 import { useApi } from "../lib/useApi.ts";

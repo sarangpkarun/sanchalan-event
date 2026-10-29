@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/local_cache.dart';
 import 'event_draft.dart';
 
+import '../../models/members.dart';
 import '../../models/event.dart';
 import '../../models/event_profile.dart';
 import '../../models/organizer.dart';
@@ -127,6 +128,10 @@ final eventDetailProvider = FutureProvider.autoDispose.family<EventGroup, String
 );
 
 /// Active tasks of an event. Invalidate after task or roadmap changes.
+final eventTeamProvider = FutureProvider.autoDispose.family<EventTeam, String>(
+  (ref, id) => ref.watch(organizerRepositoryProvider).getTeam(id),
+);
+
 final eventTasksProvider = FutureProvider.autoDispose.family<List<TaskWithDependencies>, String>(
   (ref, id) => ref.watch(organizerRepositoryProvider).listTasks(id),
   retry: _noRetry,

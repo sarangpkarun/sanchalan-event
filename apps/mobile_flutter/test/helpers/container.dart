@@ -3,10 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sanchalan/core/api_client.dart';
-import 'package:sanchalan/core/providers.dart';
-import 'package:sanchalan/features/auth/auth_controller.dart';
-import 'package:sanchalan/features/auth/auth_state.dart';
+import 'package:setzo/core/api_client.dart';
+import 'package:setzo/core/providers.dart';
+import 'package:setzo/features/auth/auth_controller.dart';
+import 'package:setzo/features/auth/auth_state.dart';
 
 import 'fake_adapter.dart';
 

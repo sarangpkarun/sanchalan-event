@@ -1,4 +1,4 @@
-// Sanchalan — Complete Data Model v1.0
+// SetzO — Complete Data Model v1.0
 // Every table from the data model doc is implemented here, including tables
 // tagged [FUTURE] in the source doc (bookings, payments, vendor_availability,
 // reviews, legal_checklist_items, event_media, thank_you_notes,
@@ -322,19 +322,44 @@ enum EventGroupRole {
   approver
 }
 
-/// [SCAFFOLD] Not needed while an EventGroup has exactly one organizer.
-/// Populated later for hired planners / co-organizing family members (Module 6).
+enum MemberStatus {
+  active
+  pending
+}
+
+/// [ACTIVE] A person collaborating on someone else's event. The event's creator is
+/// EventGroup.organizerId and has no row here. `pending` rows wait for the owner's approval
+/// (used for company events).
 model RolePermission {
   id           String         @id @default(uuid()) @db.Uuid
   eventGroupId String         @map("event_group_id") @db.Uuid
   userId       String         @map("user_id") @db.Uuid
   role         EventGroupRole
+  status       MemberStatus   @default(active)
   invitedAt    DateTime       @map("invited_at")
 
   eventGroup EventGroup @relation(fields: [eventGroupId], references: [id])
   user       Organizer  @relation(fields: [userId], references: [id])
 
+  @@unique([eventGroupId, userId])
   @@map("role_permissions")
+}
+
+/// [ACTIVE] A shareable join code for an event. Joining creates a RolePermission with `role`.
+model EventInvite {
+  id           String         @id @default(uuid()) @db.Uuid
+  code         String         @unique
+  eventGroupId String         @map("event_group_id") @db.Uuid
+  role         EventGroupRole
+  createdBy    String         @map("created_by") @db.Uuid
+  expiresAt    DateTime       @map("expires_at")
+  revokedAt    DateTime?      @map("revoked_at")
+  createdAt    DateTime       @default(now()) @map("created_at")
+
+  eventGroup EventGroup @relation(fields: [eventGroupId], references: [id])
+
+  @@index([eventGroupId])
+  @@map("event_invites")
 }
 
 // =============================================================================
@@ -345,7 +370,7 @@ enum EventType {
   wedding
   birthday
   corporate
-  religious
+  funeral
   engagement_only
   custom
 }
@@ -387,6 +412,7 @@ model EventGroup {
   guestGroups           GuestGroup[]
   guests                Guest[]
   rolePermissions       RolePermission[]
+  invites               EventInvite[]
   tasks                 Task[]
   taskEditLogs          TaskEditLog[]
   roadmapGenerationLogs RoadmapGenerationLog[]

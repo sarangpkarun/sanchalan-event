@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sanchalan/dev/mock_data.dart';
-import 'package:sanchalan/features/organizer/event_detail_view.dart';
-import 'package:sanchalan/features/organizer/home_view.dart' show HomeStatus;
-import 'package:sanchalan/features/organizer/widgets/generating_view.dart';
-import 'package:sanchalan/models/event.dart';
-import 'package:sanchalan/shared/widgets/skeleton.dart';
+import 'package:setzo/dev/mock_data.dart';
+import 'package:setzo/features/organizer/event_detail_view.dart';
+import 'package:setzo/features/organizer/home_view.dart' show HomeStatus;
+import 'package:setzo/features/organizer/widgets/generating_view.dart';
+import 'package:setzo/models/event.dart';
+import 'package:setzo/shared/widgets/skeleton.dart';
 
 import '../../helpers/pump_screen.dart';
 

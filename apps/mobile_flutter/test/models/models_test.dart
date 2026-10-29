@@ -1,14 +1,14 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sanchalan/models/auth.dart';
-import 'package:sanchalan/models/converters.dart';
-import 'package:sanchalan/models/enums.dart';
-import 'package:sanchalan/models/event.dart';
-import 'package:sanchalan/models/organizer.dart';
-import 'package:sanchalan/models/roadmap.dart';
-import 'package:sanchalan/models/vendor.dart';
-import 'package:sanchalan/models/vendor_labels.dart';
+import 'package:setzo/models/auth.dart';
+import 'package:setzo/models/converters.dart';
+import 'package:setzo/models/enums.dart';
+import 'package:setzo/models/event.dart';
+import 'package:setzo/models/organizer.dart';
+import 'package:setzo/models/roadmap.dart';
+import 'package:setzo/models/vendor.dart';
+import 'package:setzo/models/vendor_labels.dart';
 
 // Shapes mirror what apps/backend actually sends (see the services'
 // serialize* helpers): money as numbers on events, Prisma Decimals as strings

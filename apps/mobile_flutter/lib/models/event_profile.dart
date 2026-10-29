@@ -1,7 +1,7 @@
 // The event-creation flow for one event type, served by GET /event-types
 // (see apps/backend/src/config/event-type-profiles.ts). Hand-written, no codegen.
 
-enum QuestionKind { singleSelect, multiSelect, chips, text, number, date, budget }
+enum QuestionKind { singleSelect, multiSelect, chips, text, number, date, budget, location }
 
 const _kindWire = {
   QuestionKind.singleSelect: 'single_select',
@@ -11,6 +11,7 @@ const _kindWire = {
   QuestionKind.number: 'number',
   QuestionKind.date: 'date',
   QuestionKind.budget: 'budget',
+  QuestionKind.location: 'location',
 };
 
 QuestionKind _kind(String wire) => switch (wire) {
@@ -20,6 +21,7 @@ QuestionKind _kind(String wire) => switch (wire) {
       'number' => QuestionKind.number,
       'date' => QuestionKind.date,
       'budget' => QuestionKind.budget,
+      'location' => QuestionKind.location,
       _ => QuestionKind.text,
     };
 

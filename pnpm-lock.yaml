@@ -168,7 +168,7 @@ importers:
 
   apps/admin:
     dependencies:
-      '@sanchalan/shared-types':
+      '@setzo/shared-types':
         specifier: workspace:*
         version: link:../../packages/shared-types
       axios:
@@ -226,7 +226,7 @@ importers:
       '@prisma/client':
         specifier: ^6.5.0
         version: 6.19.3(prisma@6.19.3(typescript@7.0.2))(typescript@7.0.2)
-      '@sanchalan/shared-types':
+      '@setzo/shared-types':
         specifier: workspace:*
         version: link:../../packages/shared-types
       bcryptjs:

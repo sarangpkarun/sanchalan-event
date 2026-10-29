@@ -15,7 +15,7 @@ bool isAuthRejection(Object error) {
 
 bool _isAuthEndpoint(String path) => path.startsWith('/auth/');
 
-const _retriedKey = 'sanchalan.retried';
+const _retriedKey = 'setzo.retried';
 
 /// Dio client with bearer-token injection and a coalesced token refresh.
 /// Port of apps/mobile/lib/api.ts.

@@ -1,4 +1,4 @@
-# Sanchalan
+# SetzO
 
 An event-planning platform — AI-generated task roadmaps, a vendor marketplace,
 guest RSVP tracking, and budget management for weddings, birthdays, corporate
@@ -118,7 +118,7 @@ shown again, so copy it down when you see it:
 ```
 ========================================================================
 Seeded admin account — save this password now, it will not be shown again:
-  email:    admin@sanchalan.internal
+  email:    admin@setzo.internal
   password: <random>
 ========================================================================
 ```

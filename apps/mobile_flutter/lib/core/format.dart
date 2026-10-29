@@ -71,7 +71,7 @@ String eventTypeLabel(EventType t) => switch (t) {
       EventType.wedding => 'Wedding',
       EventType.birthday => 'Birthday',
       EventType.corporate => 'Corporate',
-      EventType.religious => 'Religious',
+      EventType.funeral => 'Funeral',
       EventType.engagementOnly => 'Engagement',
       EventType.custom => 'Custom',
     };

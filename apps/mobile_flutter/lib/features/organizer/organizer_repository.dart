@@ -5,6 +5,7 @@ import '../../core/providers.dart';
 import '../../models/enums.dart';
 import '../../models/event.dart';
 import '../../models/event_profile.dart';
+import '../../models/members.dart';
 import '../../models/organizer.dart';
 import '../../models/roadmap.dart';
 
@@ -66,6 +67,27 @@ class OrganizerRepository {
       );
 
   /// The server builds the budget categories with the LLM, so this is slow.
+  // --- team ---
+
+  Future<JoinResult> joinEvent(String code) async =>
+      JoinResult.fromJson(await _send('POST', '/event-groups/join', body: {'code': code}));
+
+  Future<EventTeam> getTeam(String eventGroupId) async =>
+      EventTeam.fromJson(await _get('/event-groups/$eventGroupId/members'));
+
+  Future<EventInvite> createInvite(String eventGroupId, String role) async =>
+      EventInvite.fromJson(await _send('POST', '/event-groups/$eventGroupId/invites', body: {'role': role}));
+
+  Future<void> revokeInvite(String eventGroupId, String inviteId) =>
+      _send('DELETE', '/event-groups/$eventGroupId/invites/$inviteId');
+
+  Future<void> updateMember(String eventGroupId, String userId, {String? role, bool approve = false}) =>
+      _send('PATCH', '/event-groups/$eventGroupId/members/$userId',
+          body: {'role': ?role, if (approve) 'approve': true});
+
+  Future<void> removeMember(String eventGroupId, String userId) =>
+      _send('DELETE', '/event-groups/$eventGroupId/members/$userId');
+
   Future<EventGroup> createEventGroup(CreateEventGroupBody body) async => EventGroup.fromJson(
         await _send('POST', '/event-groups', body: body.toJson(), options: _llmOptions),
       );

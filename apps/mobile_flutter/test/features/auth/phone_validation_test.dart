@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sanchalan/features/auth/country_codes.dart';
-import 'package:sanchalan/features/auth/phone_validation.dart';
+import 'package:setzo/features/auth/country_codes.dart';
+import 'package:setzo/features/auth/phone_validation.dart';
 
 Country country(String iso) => countries.firstWhere((c) => c.iso2 == iso);
 

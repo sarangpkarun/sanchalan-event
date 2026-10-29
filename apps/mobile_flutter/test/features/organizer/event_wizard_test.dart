@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sanchalan/features/organizer/event_wizard_view.dart';
-import 'package:sanchalan/models/enums.dart';
-import 'package:sanchalan/features/organizer/event_draft.dart';
-import 'package:sanchalan/models/event_profile.dart';
+import 'package:setzo/features/organizer/event_wizard_view.dart';
+import 'package:setzo/models/enums.dart';
+import 'package:setzo/features/organizer/event_draft.dart';
+import 'package:setzo/models/event_profile.dart';
 
 Map<String, dynamic> _q(String key, String label, String kind,
         {String? mapsTo, bool required = false, List<List<String>>? options, Map<String, String>? showIf}) =>
