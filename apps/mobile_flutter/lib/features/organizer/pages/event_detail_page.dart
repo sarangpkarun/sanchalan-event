@@ -254,7 +254,7 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
       generating: _generating,
       generateError: _generateError,
       onRetry: () => ref.invalidate(eventDetailProvider(_id)),
-      onTeam: event == null ? null : () => showTeamSheet(context, eventId: _id, eventName: event.name),
+      onTeam: event == null || event.organizerType == OrganizerType.individual ? null : () => showTeamSheet(context, eventId: _id, eventName: event.name),
       onEdit: () => context.push(AppPaths.eventEdit(_id)),
       onEditTotal: () => context.push(AppPaths.eventEdit(_id)),
       onDelete: event == null ? null : () => _delete(event),

@@ -4,6 +4,8 @@ export const dateOnlySchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "must be Y
 
 export const createEventGroupSchema = z.object({
   eventType: z.enum(["wedding", "birthday", "corporate", "funeral", "engagement_only", "custom"]),
+  // Who is organizing this event; defaults to the event type's default and is checked against its allowed list.
+  organizerType: z.enum(["individual", "family", "company", "committee"]).optional(),
   name: z.string().min(1),
   region: z.string().min(1),
   religionOrTradition: z.string().min(1).optional(),

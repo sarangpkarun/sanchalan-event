@@ -436,40 +436,33 @@ void main() {
   });
 
   group('ProfileSetupView', () {
-    testWidgets('needs a name and a type', (tester) async {
+    testWidgets('needs a name', (tester) async {
       await pumpScreen(tester, ProfileSetupView(onSubmit: (_) async => null), size: const Size(400, 1200));
       await tester.tap(find.text('Continue'));
       await tester.pumpAndSettle();
       expect(find.text('Please enter your name.'), findsOneWidget);
-      expect(find.text('Choose one to continue.'), findsOneWidget);
+      expect(find.text('Choose one to continue.'), findsNothing);
     });
 
     testWidgets('submits the profile', (tester) async {
       String? name;
-      OrganizerType? type;
       await pumpScreen(
         tester,
         ProfileSetupView(onSubmit: (b) async {
           name = b.displayName;
-          type = b.organizerType;
           return null;
         }),
         size: const Size(400, 1200),
       );
       await tester.enterText(find.byType(TextField), '  Priya Sharma ');
-      await tester.tap(find.text('Family'));
-      await tester.pump();
       await tester.tap(find.text('Continue'));
       await tester.pumpAndSettle();
       expect(name, 'Priya Sharma');
-      expect(type, OrganizerType.family);
     });
 
     testWidgets('shows a server error', (tester) async {
       await pumpScreen(tester, ProfileSetupView(onSubmit: (_) async => 'Something went wrong.'), size: const Size(400, 1200));
       await tester.enterText(find.byType(TextField), 'Priya');
-      await tester.tap(find.text('Individual'));
-      await tester.pump();
       await tester.tap(find.text('Continue'));
       await tester.pumpAndSettle();
       expect(find.text('Something went wrong.'), findsOneWidget);

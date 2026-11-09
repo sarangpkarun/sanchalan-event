@@ -74,7 +74,6 @@ class _TeamSheetState extends ConsumerState<TeamSheet> {
 
   Widget _content(EventTeam t) {
     final text = Theme.of(context).textTheme;
-    final company = t.ownerType == 'company';
     final me = t.members.where((m) => m.role == t.myRole).firstOrNull;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -103,9 +102,11 @@ class _TeamSheetState extends ConsumerState<TeamSheet> {
           Text('Invite someone', style: text.titleSmall),
           const SizedBox(height: AppSpace.xs),
           Text(
-            company
-                ? 'People who join need your approval before they can see anything.'
-                : 'Anyone with the code joins straight away.',
+            switch (t.organizerType) {
+              'company' => 'People who join need your approval before they can see anything.',
+              'committee' => 'Members join straight away. Give your treasurer the Approver role so they handle the budget.',
+              _ => 'Anyone with the code joins straight away and can help plan.',
+            },
             style: text.bodySmall,
           ),
           const SizedBox(height: AppSpace.s),

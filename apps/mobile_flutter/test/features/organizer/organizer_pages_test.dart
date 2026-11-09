@@ -562,7 +562,7 @@ void main() {
       await tester.enterText(find.byType(TextField), 'Priya S.');
       await tester.pump();
       await tap(tester, find.text('Save'));
-      expect(h.last('POST', '/organizers/me/profile').data, {'displayName': 'Priya S.', 'organizerType': 'family'});
+      expect(h.last('POST', '/organizers/me/profile').data, {'displayName': 'Priya S.'});
       expect(h.location, AppPaths.profile);
     });
 
@@ -588,9 +588,8 @@ void main() {
       });
       expect(h.location, AppPaths.profileSetup);
       await tester.enterText(find.byType(TextField), 'Priya Sharma');
-      await tap(tester, find.text('Family'));
       await tap(tester, find.text('Continue'));
-      expect(h.last('POST', '/organizers/me/profile').data, {'displayName': 'Priya Sharma', 'organizerType': 'family'});
+      expect(h.last('POST', '/organizers/me/profile').data, {'displayName': 'Priya Sharma'});
       expect(h.location, AppPaths.home);
     });
   });

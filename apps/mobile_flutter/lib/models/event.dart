@@ -62,6 +62,7 @@ class EventGroup {
   const EventGroup({
     required this.id,
     required this.organizerId,
+    this.organizerType = OrganizerType.individual,
     required this.eventType,
     required this.name,
     required this.region,
@@ -80,6 +81,10 @@ class EventGroup {
   factory EventGroup.fromJson(Map<String, dynamic> json) => _$EventGroupFromJson(json);
   final String id;
   final String organizerId;
+
+  /// Who is organizing this event (decides how the team and approvals work).
+  @JsonKey(defaultValue: OrganizerType.individual)
+  final OrganizerType organizerType;
   final EventType eventType;
   final String name;
   final String region;
@@ -116,6 +121,7 @@ class EventGroup {
 @JsonSerializable(includeIfNull: false)
 class CreateEventGroupBody {
   const CreateEventGroupBody({
+    this.organizerType,
     required this.eventType,
     required this.name,
     required this.region,
@@ -129,6 +135,7 @@ class CreateEventGroupBody {
   });
   factory CreateEventGroupBody.fromJson(Map<String, dynamic> json) =>
       _$CreateEventGroupBodyFromJson(json);
+  final OrganizerType? organizerType;
   final EventType eventType;
   final String name;
   final String region;

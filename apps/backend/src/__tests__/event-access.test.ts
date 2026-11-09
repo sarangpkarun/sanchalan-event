@@ -7,6 +7,7 @@ const prismaMock = vi.hoisted(() => ({
 vi.mock("../lib/prisma.js", () => ({ prisma: prismaMock }));
 
 import {
+  canProposeBudget,
   getEventAccess,
   requireBudgetEdit,
   requireEdit,
@@ -18,7 +19,7 @@ const event = (ownerType: string) => ({
   id: "e1",
   organizerId: "owner",
   name: "Wedding",
-  organizer: { organizerType: ownerType },
+  organizerType: ownerType,
 });
 const member = (role: string, status = "active") => ({ role, status });
 
@@ -72,6 +73,18 @@ describe("event access", () => {
 
     prismaMock.rolePermission.findUnique.mockResolvedValue(member("approver"));
     expect(await status(requireBudgetEdit("m", "e1"))).toBe(200);
+  });
+
+  it("committee: the treasurer edits the budget, an editor may only propose", async () => {
+    prismaMock.eventGroup.findUnique.mockResolvedValue(event("committee"));
+    prismaMock.rolePermission.findUnique.mockResolvedValue(member("editor"));
+    expect(await status(requireBudgetEdit("m", "e1"))).toBe(403);
+    expect(canProposeBudget(await getEventAccess("m", "e1"))).toBe(true);
+    expect(await status(requireEdit("m", "e1"))).toBe(200);
+
+    prismaMock.rolePermission.findUnique.mockResolvedValue(member("approver"));
+    expect(await status(requireBudgetEdit("m", "e1"))).toBe(200);
+    expect(canProposeBudget(await getEventAccess("m", "e1"))).toBe(false);
   });
 
   it("only the creator passes requireOwner", async () => {

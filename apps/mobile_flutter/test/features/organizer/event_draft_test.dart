@@ -7,6 +7,7 @@ import 'package:setzo/models/event_profile.dart';
 
 final _profile = EventTypeProfile.fromJson({
   'eventType': 'birthday',
+  'organizerOptions': ['family'],
   'version': 1,
   'steps': [
     {

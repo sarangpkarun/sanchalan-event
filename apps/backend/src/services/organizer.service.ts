@@ -6,5 +6,9 @@ export function getMe(organizerId: string) {
 }
 
 export function updateProfile(organizerId: string, input: UpdateProfileInput) {
-  return prisma.organizer.update({ where: { id: organizerId }, data: input });
+  const { displayName, organizerType } = input;
+  return prisma.organizer.update({
+    where: { id: organizerId },
+    data: { displayName, ...(organizerType ? { organizerType } : {}) },
+  });
 }

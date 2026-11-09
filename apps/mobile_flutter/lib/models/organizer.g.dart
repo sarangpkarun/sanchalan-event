@@ -47,12 +47,15 @@ UpdateOrganizerProfileBody _$UpdateOrganizerProfileBodyFromJson(
   Map<String, dynamic> json,
 ) => UpdateOrganizerProfileBody(
   displayName: json['displayName'] as String,
-  organizerType: $enumDecode(_$OrganizerTypeEnumMap, json['organizerType']),
+  organizerType: $enumDecodeNullable(
+    _$OrganizerTypeEnumMap,
+    json['organizerType'],
+  ),
 );
 
 Map<String, dynamic> _$UpdateOrganizerProfileBodyToJson(
   UpdateOrganizerProfileBody instance,
 ) => <String, dynamic>{
   'displayName': instance.displayName,
-  'organizerType': _$OrganizerTypeEnumMap[instance.organizerType]!,
+  'organizerType': ?_$OrganizerTypeEnumMap[instance.organizerType],
 };

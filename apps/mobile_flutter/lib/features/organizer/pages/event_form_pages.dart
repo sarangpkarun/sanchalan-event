@@ -86,6 +86,7 @@ class EventCreatePage extends ConsumerWidget {
         context,
         ref,
         CreateEventGroupBody(
+          organizerType: r.organizerType,
           eventType: r.type,
           name: r.name,
           region: r.region,

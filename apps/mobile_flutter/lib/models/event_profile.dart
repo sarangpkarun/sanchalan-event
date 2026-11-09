@@ -45,6 +45,7 @@ class Question {
     this.showIfKey,
     this.showIfEquals,
     this.mapsTo,
+    this.suggestions = const [],
   });
 
   factory Question.fromJson(Map<String, dynamic> j) {
@@ -61,6 +62,7 @@ class Question {
       showIfKey: showIf?['key'] as String?,
       showIfEquals: showIf?['equals'] as String?,
       mapsTo: j['mapsTo'] as String?,
+      suggestions: ((j['suggestions'] as List?) ?? const []).cast<String>(),
     );
   }
 
@@ -76,6 +78,9 @@ class Question {
   /// Top-level event field this answer fills (`name`, `region`, ...). Null means it goes in `details`.
   final String? mapsTo;
 
+  /// Tap-to-fill example answers for a text question.
+  final List<String> suggestions;
+
   Map<String, dynamic> toJson() => {
         'key': key,
         'label': label,
@@ -85,6 +90,7 @@ class Question {
         'required': required,
         if (showIfKey != null) 'showIf': {'key': showIfKey, 'equals': showIfEquals},
         'mapsTo': ?mapsTo,
+        if (suggestions.isNotEmpty) 'suggestions': suggestions,
       };
 
   bool visibleFor(Map<String, Object?> answers) => showIfKey == null || answers[showIfKey] == showIfEquals;
@@ -111,18 +117,32 @@ class WizardStep {
 }
 
 class EventTypeProfile {
-  const EventTypeProfile({required this.eventType, required this.version, required this.steps});
+  const EventTypeProfile({
+    required this.eventType,
+    required this.version,
+    required this.steps,
+    this.organizerOptions = const [],
+    this.defaultOrganizer,
+  });
   factory EventTypeProfile.fromJson(Map<String, dynamic> j) => EventTypeProfile(
         eventType: j['eventType'] as String,
         version: j['version'] as int,
+        organizerOptions: ((j['organizerOptions'] as List?) ?? const []).cast<String>(),
+        defaultOrganizer: j['defaultOrganizer'] as String?,
         steps: (j['steps'] as List).map((s) => WizardStep.fromJson(s as Map<String, dynamic>)).toList(),
       );
   final String eventType;
   final int version;
+
+  /// Wire names of the organizer kinds allowed for this event type (empty: all).
+  final List<String> organizerOptions;
+  final String? defaultOrganizer;
   final List<WizardStep> steps;
   Map<String, dynamic> toJson() => {
         'eventType': eventType,
         'version': version,
+        if (organizerOptions.isNotEmpty) 'organizerOptions': organizerOptions,
+        'defaultOrganizer': ?defaultOrganizer,
         'steps': steps.map((s) => s.toJson()).toList(),
       };
 }

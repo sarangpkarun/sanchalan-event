@@ -14,10 +14,9 @@ function newCode(): string {
 }
 
 export async function createInvite(organizerId: string, eventGroupId: string, input: CreateInviteInput) {
-  const { ownerIsCompany } = await requireOwner(organizerId, eventGroupId);
-  const owner = await prisma.organizer.findUniqueOrThrow({ where: { id: organizerId } });
-  if (owner.organizerType === "individual") {
-    throw new AppError(400, "Planning on your own. Change your profile to Family, Group or Company to invite people.");
+  const { organizerType } = await requireOwner(organizerId, eventGroupId);
+  if (organizerType === "individual") {
+    throw new AppError(400, "This event is planned on your own. Make it a Family, Committee or Company event to invite people.");
   }
   const invite = await prisma.eventInvite.create({
     data: {
@@ -33,8 +32,8 @@ export async function createInvite(organizerId: string, eventGroupId: string, in
     code: invite.code,
     role: invite.role,
     expiresAt: invite.expiresAt,
-    // For a company event the owner approves each person who joins.
-    requiresApproval: ownerIsCompany,
+    // For a company event the initiator approves each person who joins.
+    requiresApproval: organizerType === "company",
   };
 }
 
@@ -51,7 +50,7 @@ export async function revokeInvite(organizerId: string, eventGroupId: string, in
 export async function joinByCode(organizerId: string, code: string) {
   const invite = await prisma.eventInvite.findUnique({
     where: { code },
-    include: { eventGroup: { include: { organizer: { select: { organizerType: true } } } } },
+    include: { eventGroup: true },
   });
   if (!invite || invite.revokedAt || invite.expiresAt < new Date()) {
     throw new AppError(404, "This invite code is not valid or has expired");
@@ -69,7 +68,7 @@ export async function joinByCode(organizerId: string, code: string) {
   });
   if (existing) return summary(existing.status);
 
-  const status = eventGroup.organizer.organizerType === "company" ? "pending" : "active";
+  const status = eventGroup.organizerType === "company" ? "pending" : "active";
   await prisma.rolePermission.create({
     data: { eventGroupId: eventGroup.id, userId: organizerId, role: invite.role, status, invitedAt: new Date() },
   });
@@ -95,7 +94,7 @@ export async function listMembers(organizerId: string, eventGroupId: string) {
   ]);
   return {
     myRole: access.role,
-    ownerType: owner.organizerType,
+    organizerType: access.organizerType,
     members: [
       { userId: owner.id, name: owner.displayName, role: "owner" as const, status: "active" as const },
       ...rows

@@ -73,6 +73,9 @@ const _$BudgetTierEnumMap = {
 EventGroup _$EventGroupFromJson(Map<String, dynamic> json) => EventGroup(
   id: json['id'] as String,
   organizerId: json['organizerId'] as String,
+  organizerType:
+      $enumDecodeNullable(_$OrganizerTypeEnumMap, json['organizerType']) ??
+      OrganizerType.individual,
   eventType: $enumDecode(_$EventTypeEnumMap, json['eventType']),
   name: json['name'] as String,
   region: json['region'] as String,
@@ -106,6 +109,7 @@ Map<String, dynamic> _$EventGroupToJson(
 ) => <String, dynamic>{
   'id': instance.id,
   'organizerId': instance.organizerId,
+  'organizerType': _$OrganizerTypeEnumMap[instance.organizerType]!,
   'eventType': _$EventTypeEnumMap[instance.eventType]!,
   'name': instance.name,
   'region': instance.region,
@@ -120,6 +124,13 @@ Map<String, dynamic> _$EventGroupToJson(
   'subEvents': instance.subEvents.map((e) => e.toJson()).toList(),
   'budgetCategories': instance.budgetCategories.map((e) => e.toJson()).toList(),
   'tasks': instance.tasks.map((e) => e.toJson()).toList(),
+};
+
+const _$OrganizerTypeEnumMap = {
+  OrganizerType.individual: 'individual',
+  OrganizerType.family: 'family',
+  OrganizerType.company: 'company',
+  OrganizerType.committee: 'committee',
 };
 
 const _$EventTypeEnumMap = {
@@ -141,6 +152,10 @@ const _$EventGroupStatusEnumMap = {
 CreateEventGroupBody _$CreateEventGroupBodyFromJson(
   Map<String, dynamic> json,
 ) => CreateEventGroupBody(
+  organizerType: $enumDecodeNullable(
+    _$OrganizerTypeEnumMap,
+    json['organizerType'],
+  ),
   eventType: $enumDecode(_$EventTypeEnumMap, json['eventType']),
   name: json['name'] as String,
   region: json['region'] as String,
@@ -156,6 +171,7 @@ CreateEventGroupBody _$CreateEventGroupBodyFromJson(
 Map<String, dynamic> _$CreateEventGroupBodyToJson(
   CreateEventGroupBody instance,
 ) => <String, dynamic>{
+  'organizerType': ?_$OrganizerTypeEnumMap[instance.organizerType],
   'eventType': _$EventTypeEnumMap[instance.eventType]!,
   'name': instance.name,
   'region': instance.region,

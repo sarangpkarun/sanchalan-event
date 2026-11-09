@@ -12,6 +12,7 @@ import { computeBudgetAllocations } from "../config/budget-splits.js";
 import { generateBudgetSplit } from "./budget-split.service.js";
 import { validateEventDetails, validateEventDetailsForType } from "./event-profile.service.js";
 import { getGeneratedProfileForOrganizer } from "./event-profile-generator.service.js";
+import { allowedOrganizerKinds, getEventTypeProfile, type EventTypeProfile } from "../config/event-type-profiles.js";
 import type {
   CreateEventGroupInput,
   UpdateEventGroupInput,
@@ -22,7 +23,6 @@ import type {
 export function assertProfileComplete(organizer: Organizer): void {
   const missingFields: string[] = [];
   if (!organizer.displayName) missingFields.push("displayName");
-  if (!organizer.organizerType) missingFields.push("organizerType");
   if (missingFields.length > 0) {
     throw new AppError(400, "Complete your profile first", { missingFields });
   }
@@ -105,12 +105,18 @@ function serializeEventGroupWithRoadmap(
 export async function createEventGroup(organizerId: string, input: CreateEventGroupInput) {
   const organizer = await prisma.organizer.findUniqueOrThrow({ where: { id: organizerId } });
   assertProfileComplete(organizer);
+  let profile: EventTypeProfile;
   if (input.generatedProfileId) {
     if (input.eventType !== "custom") throw new AppError(400, "generatedProfileId is only for custom events");
-    const profile = await getGeneratedProfileForOrganizer(organizerId, input.generatedProfileId);
+    profile = await getGeneratedProfileForOrganizer(organizerId, input.generatedProfileId);
     validateEventDetails(profile, input, input.details);
   } else {
+    profile = getEventTypeProfile(input.eventType);
     validateEventDetailsForType(input.eventType, input, input.details);
+  }
+  const organizerType = input.organizerType ?? profile.defaultOrganizer ?? "individual";
+  if (!allowedOrganizerKinds(profile).includes(organizerType)) {
+    throw new AppError(400, `A ${input.eventType.replace("_", " ")} event cannot be organized as "${organizerType}".`);
   }
 
   // LLM call happens before (not inside) the transaction so no DB connection is held open meanwhile.
@@ -131,6 +137,7 @@ export async function createEventGroup(organizerId: string, input: CreateEventGr
     const eventGroup = await tx.eventGroup.create({
       data: {
         organizerId,
+        organizerType,
         eventType: input.eventType,
         name: input.name,
         region: input.region,

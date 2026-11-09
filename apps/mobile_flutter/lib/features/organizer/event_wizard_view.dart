@@ -12,6 +12,7 @@ import '../../shared/widgets/brand_mark.dart';
 import '../../shared/widgets/location_picker.dart';
 import '../../shared/widgets/primary_button.dart';
 import 'event_draft.dart';
+import 'organizer_type_info.dart';
 import 'sheets/sheet_scaffold.dart' show parseAmount;
 
 const _typeHints = {
@@ -45,6 +46,7 @@ class WizardResult {
     required this.tier,
     required this.details,
     this.generatedProfileId,
+    this.organizerType,
   });
 
   final EventType type;
@@ -57,6 +59,9 @@ class WizardResult {
   final BudgetTier tier;
   final Map<String, dynamic> details;
   final String? generatedProfileId;
+
+  /// Who is organizing this event (family, committee, company or just the user).
+  final OrganizerType? organizerType;
 }
 
 /// Step-by-step event creation. The questions come from the event type's
@@ -154,7 +159,48 @@ class _EventWizardViewState extends State<EventWizardView> {
         widget.profiles.where((p) => p.eventType == 'custom').firstOrNull;
   }
 
-  List<WizardStep> get _steps => _profile?.steps ?? const [];
+  /// The organizer kinds this event type allows; a profile that lists none allows all.
+  List<OrganizerType> get _organizerOptions {
+    final p = _profile;
+    if (p == null) return const [];
+    final listed = [for (final w in p.organizerOptions) ?organizerTypeFromWire(w)];
+    return listed.isEmpty ? OrganizerType.values : listed;
+  }
+
+  /// "Who is organizing?" comes first for every event type, built from what the type allows.
+  WizardStep? get _organizerStep {
+    final options = _organizerOptions;
+    if (options.length < 2) return null;
+    return WizardStep(
+      id: 'organizer',
+      title: 'Who is organizing?',
+      subtitle: 'This decides how your team works together on the event.',
+      questions: [
+        Question(
+          key: organizerQuestionKey,
+          label: 'Who is organizing?',
+          kind: QuestionKind.singleSelect,
+          required: true,
+          mapsTo: organizerQuestionKey,
+          options: [for (final t in options) QuestionOption(value: t.name, label: organizerTypeInfo[t]!.title)],
+        ),
+      ],
+    );
+  }
+
+  /// The chosen organizer kind, or the event type's default until the user picks one.
+  String? get _organizerChoice {
+    final picked = _answers[organizerQuestionKey];
+    if (picked is String) return picked;
+    final options = _organizerOptions;
+    final byProfile = organizerTypeFromWire(_profile?.defaultOrganizer);
+    if (byProfile != null && options.contains(byProfile)) return byProfile.name;
+    return options.isEmpty ? null : options.first.name;
+  }
+
+  Object? _valueOf(Question q) => q.key == organizerQuestionKey ? _organizerChoice : _answers[q.key];
+
+  List<WizardStep> get _steps => [?_organizerStep, ...(_profile?.steps ?? const <WizardStep>[])];
   int get _totalSteps => 1 + _extraSteps + _steps.length;
   bool get _isLast => _type != null && _step == _totalSteps - 1;
 
@@ -164,7 +210,7 @@ class _EventWizardViewState extends State<EventWizardView> {
 
   String? _errorFor(Question q, {bool force = false}) {
     if (!_showErrors && !force) return null;
-    final v = _answers[q.key];
+    final v = _valueOf(q);
     if (q.required && _isBlank(v)) return 'This one is needed.';
     if (q.kind == QuestionKind.budget && !_isBlank(v) && (v is! double || v <= 0)) {
       return 'Enter a budget greater than zero.';
@@ -286,7 +332,7 @@ class _EventWizardViewState extends State<EventWizardView> {
     final details = <String, dynamic>{};
     for (final step in _steps) {
       for (final q in _visible(step)) {
-        final v = _answers[q.key];
+        final v = _valueOf(q);
         if (_isBlank(v)) continue;
         if (q.mapsTo != null) {
           core[q.mapsTo!] = v;
@@ -318,6 +364,7 @@ class _EventWizardViewState extends State<EventWizardView> {
       tier: BudgetTier.values.firstWhere((t) => enumWireValue(t) == tier),
       details: details,
       generatedProfileId: _type == EventType.custom ? _generated?.profileId : null,
+      organizerType: organizerTypeFromWire(core[organizerQuestionKey] as String?),
     );
   }
 
@@ -340,14 +387,24 @@ class _EventWizardViewState extends State<EventWizardView> {
                 children: [
                   _Progress(current: _step, total: _totalSteps),
                   Expanded(
-                    child: SingleChildScrollView(
-                      key: ValueKey('step-$_step'),
-                      padding: const EdgeInsets.fromLTRB(AppSpace.xl, AppSpace.l, AppSpace.xl, AppSpace.xl),
-                      child: _step == 0
-                          ? _typeStep(text)
-                          : _onDescribeStep
-                              ? _describeStep(text)
-                              : _profileStep(text, _currentStep),
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 250),
+                      transitionBuilder: (child, animation) => FadeTransition(
+                        opacity: animation,
+                        child: SlideTransition(
+                          position: Tween<Offset>(begin: const Offset(0.06, 0), end: Offset.zero).animate(animation),
+                          child: child,
+                        ),
+                      ),
+                      child: SingleChildScrollView(
+                        key: ValueKey('step-$_step'),
+                        padding: const EdgeInsets.fromLTRB(AppSpace.xl, AppSpace.l, AppSpace.xl, AppSpace.xl),
+                        child: _step == 0
+                            ? _typeStep(text)
+                            : _onDescribeStep
+                                ? _describeStep(text)
+                                : _profileStep(text, _currentStep),
+                      ),
                     ),
                   ),
                   BottomActionBar(
@@ -454,7 +511,7 @@ class _EventWizardViewState extends State<EventWizardView> {
             child: QuestionField(
               key: ValueKey('${_type?.name}-${q.key}'),
               question: q,
-              value: _answers[q.key],
+              value: _valueOf(q),
               errorText: _errorFor(q),
               today: widget.today,
               onLocationPicked: (l) => _location = l,
@@ -571,6 +628,57 @@ class _QuestionFieldState extends State<QuestionField> {
 
   Question get _q => widget.question;
 
+  static const _guestShortcuts = [25, 50, 100, 200, 500];
+  static const _budgetShortcuts = [
+    ('₹1L', 100000.0),
+    ('₹2.5L', 250000.0),
+    ('₹5L', 500000.0),
+    ('₹10L', 1000000.0),
+    ('₹25L', 2500000.0),
+  ];
+  static const _dateShortcuts = [('In 1 month', 1), ('In 3 months', 3), ('In 6 months', 6), ('Next year', 12)];
+
+  int _stepFrom(int n, int dir) => (n + dir * (n >= 10 || (dir > 0 && n >= 5) ? 10 : 1)).clamp(1, 100000);
+
+  /// Sets the box text and reports the typed value, as if the user had entered it.
+  void _fill(String shown, Object value) {
+    setState(() => _controller.text = shown);
+    widget.onChanged(value);
+  }
+
+  Widget _organizerCards() {
+    final selected = widget.value as String?;
+    return Column(
+      children: [
+        for (final o in _q.options)
+          Padding(
+            padding: const EdgeInsets.only(bottom: AppSpace.m),
+            child: _ChoiceCard(
+              icon: organizerTypeInfo[organizerTypeFromWire(o.value)]!.icon,
+              label: o.label,
+              hint: organizerTypeInfo[organizerTypeFromWire(o.value)]!.purpose,
+              selected: selected == o.value,
+              onTap: () => widget.onChanged(o.value),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _chips(List<_Shortcut> items) => Wrap(
+        spacing: AppSpace.s,
+        runSpacing: AppSpace.s,
+        children: [
+          for (final i in items)
+            ChoiceChip(
+              label: Text(i.label),
+              selected: i.selected,
+              showCheckmark: false,
+              onSelected: (_) => i.onTap(),
+            ),
+        ],
+      );
+
   String _initialText() {
     final v = widget.value;
     if (v is double) return v.round().toString();
@@ -598,6 +706,7 @@ class _QuestionFieldState extends State<QuestionField> {
   @override
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
+    if (_q.key == organizerQuestionKey) return _organizerCards();
     switch (_q.kind) {
       case QuestionKind.location:
         return LocationField(
@@ -608,48 +717,112 @@ class _QuestionFieldState extends State<QuestionField> {
           onPicked: (l) => widget.onLocationPicked?.call(l),
         );
       case QuestionKind.text:
-        return AppTextField(
-          label: _q.label,
-          controller: _controller,
-          errorText: widget.errorText,
-          textInputAction: TextInputAction.next,
-          onChanged: widget.onChanged,
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (_q.suggestions.isNotEmpty) ...[
+              _chips([
+                for (final sug in _q.suggestions)
+                  _Shortcut(sug, _controller.text.trim() == sug, () => _fill(sug, sug)),
+              ]),
+              const SizedBox(height: AppSpace.m),
+            ],
+            AppTextField(
+              label: _q.label,
+              controller: _controller,
+              errorText: widget.errorText,
+              textInputAction: TextInputAction.next,
+              onChanged: (s) {
+                setState(() {});
+                widget.onChanged(s);
+              },
+            ),
+          ],
         );
       case QuestionKind.number:
-        return AppTextField(
-          label: _q.label,
-          controller: _controller,
-          keyboardType: TextInputType.number,
-          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-          errorText: widget.errorText,
-          onChanged: (s) => widget.onChanged(int.tryParse(s.trim())),
+        final n = int.tryParse(_controller.text.trim());
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _chips([
+              for (final g in _guestShortcuts) _Shortcut('$g', n == g, () => _fill('$g', g)),
+            ]),
+            const SizedBox(height: AppSpace.m),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: AppTextField(
+                    label: _q.label,
+                    controller: _controller,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    errorText: widget.errorText,
+                    onChanged: (s) {
+                      setState(() {});
+                      widget.onChanged(int.tryParse(s.trim()));
+                    },
+                  ),
+                ),
+                IconButton(
+                  tooltip: 'Fewer',
+                  onPressed: (n ?? 0) > 1 ? () => _fill('${_stepFrom(n!, -1)}', _stepFrom(n, -1)) : null,
+                  icon: const Icon(Icons.remove_circle_outline),
+                ),
+                IconButton(
+                  tooltip: 'More',
+                  onPressed: () => _fill('${_stepFrom(n ?? 0, 1)}', _stepFrom(n ?? 0, 1)),
+                  icon: const Icon(Icons.add_circle_outline),
+                ),
+              ],
+            ),
+          ],
         );
       case QuestionKind.budget:
         final v = widget.value;
-        return AppTextField(
-          label: _q.label,
-          controller: _controller,
-          keyboardType: TextInputType.number,
-          prefix: const Padding(
-            padding: EdgeInsets.only(left: AppSpace.l, right: AppSpace.s),
-            child: Text('₹'),
-          ),
-          inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9,]'))],
-          errorText: widget.errorText,
-          helperText: v is double ? formatInr(v) : null,
-          onChanged: (s) => widget.onChanged(parseAmount(s)),
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _chips([
+              for (final b in _budgetShortcuts)
+                _Shortcut(b.$1, v is double && v == b.$2, () => _fill('${b.$2.round()}', b.$2)),
+            ]),
+            const SizedBox(height: AppSpace.m),
+            AppTextField(
+              label: _q.label,
+              controller: _controller,
+              keyboardType: TextInputType.number,
+              prefix: const Padding(
+                padding: EdgeInsets.only(left: AppSpace.l, right: AppSpace.s),
+                child: Text('₹'),
+              ),
+              inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9,]'))],
+              errorText: widget.errorText,
+              helperText: v is double ? formatInr(v) : null,
+              onChanged: (s) => widget.onChanged(parseAmount(s)),
+            ),
+          ],
         );
       case QuestionKind.date:
         final d = widget.value as DateTime?;
+        final today = dateOnly(widget.today ?? DateTime.now());
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(_q.label, style: text.titleSmall),
             const SizedBox(height: AppSpace.s),
+            _chips([
+              for (final o in _dateShortcuts)
+                () {
+                  final date = DateTime(today.year, today.month + o.$2, today.day);
+                  return _Shortcut(o.$1, d == date, () => widget.onChanged(date));
+                }(),
+            ]),
+            const SizedBox(height: AppSpace.s),
             OutlinedButton.icon(
               onPressed: _pickDate,
               icon: const Icon(Icons.calendar_today_outlined, size: 18),
-              label: Text(d == null ? 'Choose a date' : formatLongDate(d)),
+              label: Text(d == null ? 'Or choose a date' : formatLongDate(d)),
               style: OutlinedButton.styleFrom(alignment: Alignment.centerLeft),
             ),
             _error(text),
@@ -781,4 +954,11 @@ class _BuildingView extends StatelessWidget {
       ),
     );
   }
+}
+
+class _Shortcut {
+  const _Shortcut(this.label, this.selected, this.onTap);
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
 }

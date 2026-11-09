@@ -13,7 +13,7 @@ class WizardDraft {
     this.generated,
   });
 
-  static const storageKey = 'event_wizard_draft_v1';
+  static const storageKey = 'event_wizard_draft_v2';
   static const maxAge = Duration(days: 7);
 
   final EventType? type;

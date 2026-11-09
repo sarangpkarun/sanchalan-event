@@ -1,23 +1,13 @@
 import 'package:flutter/material.dart';
 
-import '../../core/format.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../models/enums.dart';
 import '../../models/organizer.dart';
-import '../../shared/widgets/app_card.dart';
 import '../../shared/widgets/app_text_field.dart';
 import '../../shared/widgets/bottom_action_bar.dart';
 import '../../shared/widgets/primary_button.dart';
 
-const _typeInfo = {
-  OrganizerType.individual: (Icons.person_outline, 'Just you. Plan on your own, no team'),
-  OrganizerType.family: (Icons.family_restroom_outlined, 'Relatives plan together. Anyone you invite can edit'),
-  OrganizerType.company: (Icons.business_outlined, 'You lead. Staff join with your approval; only you and approvers change the budget'),
-  OrganizerType.committee: (Icons.groups_outlined, 'Members share the work. Give someone the approver role for the budget'),
-};
-
-/// One-time profile step after the first login: name and who is organizing.
+/// One-time profile step after the first login: just the name. Who is organizing is asked per event.
 class ProfileSetupView extends StatefulWidget {
   const ProfileSetupView({
     super.key,
@@ -40,7 +30,6 @@ class _ProfileSetupViewState extends State<ProfileSetupView> {
   late final _name = TextEditingController(
     text: widget.initial?.displayName ?? '',
   );
-  late OrganizerType? _type = widget.initial?.organizerType;
   bool _showErrors = false;
   bool _submitting = false;
   String? _error;
@@ -56,13 +45,10 @@ class _ProfileSetupViewState extends State<ProfileSetupView> {
       _showErrors = true;
       _error = null;
     });
-    if (_name.text.trim().isEmpty || _type == null) return;
+    if (_name.text.trim().isEmpty) return;
     setState(() => _submitting = true);
     final error = await widget.onSubmit(
-      UpdateOrganizerProfileBody(
-        displayName: _name.text.trim(),
-        organizerType: _type!,
-      ),
+      UpdateOrganizerProfileBody(displayName: _name.text.trim()),
     );
     if (!mounted) return;
     setState(() {
@@ -113,7 +99,7 @@ class _ProfileSetupViewState extends State<ProfileSetupView> {
                       ),
                       const SizedBox(height: AppSpace.s),
                       Text(
-                        'Just two quick things so we can personalise your plan.',
+                        'What should we call you? You choose who is organizing each event when you create it.',
                         style: text.bodyLarge,
                       ),
                       const SizedBox(height: AppSpace.xl),
@@ -128,72 +114,6 @@ class _ProfileSetupViewState extends State<ProfileSetupView> {
                       textInputAction: TextInputAction.done,
                       onChanged: (_) => setState(() {}),
                     ),
-                    const SizedBox(height: AppSpace.xl),
-                    Text('Who is organizing?', style: text.titleSmall),
-                    const SizedBox(height: AppSpace.s),
-                    for (final t in OrganizerType.values)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: AppSpace.s),
-                        child: Semantics(
-                          button: true,
-                          selected: _type == t,
-                          inMutuallyExclusiveGroup: true,
-                          label:
-                              '${organizerTypeLabel(t)}. ${_typeInfo[t]!.$2}',
-                          excludeSemantics: true,
-                          onTap: () => setState(() => _type = t),
-                          child: AppCard(
-                            raised: false,
-                            onTap: () => setState(() => _type = t),
-                            color: _type == t
-                                ? AppColors.primaryContainer
-                                : AppColors.surface,
-                            borderColor: _type == t
-                                ? AppColors.primary
-                                : AppColors.outline,
-                            child: Row(
-                              children: [
-                                Icon(
-                                  _typeInfo[t]!.$1,
-                                  color: AppColors.primary,
-                                ),
-                                const SizedBox(width: AppSpace.l),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        organizerTypeLabel(t),
-                                        style: text.titleMedium,
-                                      ),
-                                      Text(
-                                        _typeInfo[t]!.$2,
-                                        style: text.bodySmall,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Icon(
-                                  _type == t
-                                      ? Icons.radio_button_checked
-                                      : Icons.radio_button_unchecked,
-                                  color: _type == t
-                                      ? AppColors.primary
-                                      : AppColors.outlineStrong,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    if (_showErrors && _type == null)
-                      Text(
-                        'Choose one to continue.',
-                        style: text.bodySmall?.copyWith(
-                          color: AppColors.errorText,
-                        ),
-                      ),
                     if (_error != null) ...[
                       const SizedBox(height: AppSpace.m),
                       Text(

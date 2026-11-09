@@ -39,6 +39,8 @@ export interface Question {
   /** Only ask when another answer (by key) equals this value. */
   showIf?: { key: string; equals: string };
   mapsTo?: CoreField;
+  /** Tap-to-fill shortcuts for a text question. The user can still type anything. */
+  suggestions?: string[];
 }
 
 export interface Step {
@@ -48,9 +50,16 @@ export interface Step {
   questions: Question[];
 }
 
+export type OrganizerKind = "individual" | "family" | "company" | "committee";
+export const ALL_ORGANIZER_KINDS: OrganizerKind[] = ["individual", "family", "committee", "company"];
+
 export interface EventTypeProfile {
   eventType: string;
   version: number;
+  /** Who may be organizing this kind of event (a company funeral makes no sense). */
+  organizerOptions?: OrganizerKind[];
+  /** Pre-selected in the wizard. */
+  defaultOrganizer?: OrganizerKind;
   steps: Step[];
 }
 
@@ -83,10 +92,10 @@ const ENTERTAINMENT: Question = {
   options: opts(["dj", "DJ"], ["live_music", "Live music"], ["games", "Games"], ["performer", "Magician / performer"]),
 };
 
-const nameStep = (label: string): Step => ({
+const nameStep = (label: string, suggestions?: string[]): Step => ({
   id: "basics",
   title: "Let's start",
-  questions: [{ key: "name", label, kind: "text", required: true, mapsTo: "name" }],
+  questions: [{ key: "name", label, kind: "text", required: true, mapsTo: "name", ...(suggestions ? { suggestions } : {}) }],
 });
 
 const coreStep = (): Step[] => [
@@ -125,9 +134,11 @@ const regionQuestion = (required = true): Question => ({
 
 const WEDDING: EventTypeProfile = {
   eventType: "wedding",
-  version: 1,
+  version: 2,
+  organizerOptions: ["family", "committee", "individual"],
+  defaultOrganizer: "family",
   steps: [
-    nameStep("What should we call this wedding?"),
+    nameStep("What is the wedding?", ["Our wedding", "My sister's wedding", "My brother's wedding", "A friend's wedding"]),
     {
       id: "tradition",
       title: "Your traditions",
@@ -142,7 +153,7 @@ const WEDDING: EventTypeProfile = {
           allowOther: true,
           options: opts(["hindu", "Hindu"], ["muslim", "Muslim"], ["christian", "Christian"], ["sikh", "Sikh"], ["jain", "Jain"], ["interfaith", "Interfaith / civil"]),
         },
-        { key: "community", label: "Community (optional)", kind: "text" },
+        { key: "community", label: "Community (optional)", kind: "text", suggestions: ["Tamil", "Telugu", "Malayali", "Punjabi", "Gujarati", "Marathi"] },
       ],
     },
     {
@@ -174,9 +185,11 @@ const WEDDING: EventTypeProfile = {
 
 const BIRTHDAY: EventTypeProfile = {
   eventType: "birthday",
-  version: 1,
+  version: 2,
+  organizerOptions: ["individual", "family"],
+  defaultOrganizer: "individual",
   steps: [
-    nameStep("What should we call this party?"),
+    nameStep("Whose birthday is it?", ["My birthday", "My child's birthday", "My parent's birthday", "A friend's birthday"]),
     {
       id: "celebrant",
       title: "About the party",
@@ -188,7 +201,7 @@ const BIRTHDAY: EventTypeProfile = {
           kind: "single_select",
           options: opts(["kid", "A child"], ["teen", "A teenager"], ["adult", "An adult"], ["milestone", "A milestone (e.g. 50th)"]),
         },
-        { key: "theme", label: "Theme (optional)", kind: "text" },
+        { key: "theme", label: "Theme (optional)", kind: "text", suggestions: ["Superhero", "Princess", "Jungle", "Retro", "Garden party"] },
         { key: "surprise", label: "Is it a surprise?", kind: "single_select", options: opts(["yes", "Yes"], ["no", "No"]) },
       ],
     },
@@ -203,9 +216,11 @@ const BIRTHDAY: EventTypeProfile = {
 
 const CORPORATE: EventTypeProfile = {
   eventType: "corporate",
-  version: 1,
+  version: 2,
+  organizerOptions: ["company", "committee"],
+  defaultOrganizer: "company",
   steps: [
-    nameStep("What is the event called?"),
+    nameStep("What is the event?", ["Annual day", "Product launch", "Team offsite", "Conference"]),
     {
       id: "kind",
       title: "About the event",
@@ -238,7 +253,9 @@ const CORPORATE: EventTypeProfile = {
 
 const FUNERAL: EventTypeProfile = {
   eventType: "funeral",
-  version: 1,
+  version: 2,
+  organizerOptions: ["family", "committee"],
+  defaultOrganizer: "family",
   steps: [
     nameStep("In loving memory of..."),
     {
@@ -254,7 +271,7 @@ const FUNERAL: EventTypeProfile = {
           allowOther: true,
           options: opts(["cremation", "Cremation"], ["burial", "Burial"], ["memorial", "Memorial service"], ["prayer_meet", "Prayer meet"]),
         },
-        { key: "tradition", label: "Rites or tradition followed (optional)", kind: "text" },
+        { key: "tradition", label: "Rites or tradition followed (optional)", kind: "text", suggestions: ["Hindu", "Christian", "Muslim", "Sikh"] },
         { key: "needsOfficiant", label: "Need a priest or officiant?", kind: "single_select", options: opts(["yes", "Yes"], ["no", "No"]) },
       ],
     },
@@ -283,9 +300,11 @@ const FUNERAL: EventTypeProfile = {
 
 const ENGAGEMENT_ONLY: EventTypeProfile = {
   eventType: "engagement_only",
-  version: 1,
+  version: 2,
+  organizerOptions: ["family", "committee", "individual"],
+  defaultOrganizer: "family",
   steps: [
-    nameStep("What should we call this engagement?"),
+    nameStep("What is the engagement?", ["Our engagement", "My sister's engagement", "A friend's engagement"]),
     {
       id: "details",
       title: "About the engagement",
@@ -310,15 +329,17 @@ const ENGAGEMENT_ONLY: EventTypeProfile = {
 /** Used for `custom` and as the safe fallback for any type without its own profile. */
 const GENERIC: EventTypeProfile = {
   eventType: "custom",
-  version: 1,
+  version: 2,
+  organizerOptions: ALL_ORGANIZER_KINDS,
+  defaultOrganizer: "individual",
   steps: [
-    nameStep("What are you planning?"),
+    nameStep("What is the event?", ["Housewarming", "Baby shower", "Reunion", "College fest"]),
     {
       id: "about",
       title: "Tell us more",
       questions: [
         regionQuestion(),
-        { key: "description", label: "Describe your event in a sentence", kind: "text" },
+        { key: "description", label: "Describe your event in a sentence", kind: "text", suggestions: ["A small family get-together", "A community celebration", "A formal gathering"] },
       ],
     },
     ...coreStep(),
@@ -343,9 +364,11 @@ export const CORE_QUESTION_KEYS: string[] = [
 export function buildCustomProfile(generatedSteps: Step[]): EventTypeProfile {
   return {
     eventType: "custom",
-    version: 1,
+    version: 2,
+    organizerOptions: ALL_ORGANIZER_KINDS,
+    defaultOrganizer: "individual",
     steps: [
-      nameStep("What are you planning?"),
+      nameStep("What is the event?", ["Housewarming", "Baby shower", "Reunion", "College fest"]),
       { id: "place", title: "Where?", questions: [regionQuestion()] },
       ...generatedSteps,
       ...coreStep(),
@@ -359,4 +382,9 @@ export function listEventTypeProfiles(): EventTypeProfile[] {
 
 export function getEventTypeProfile(eventType: string): EventTypeProfile {
   return PROFILES.find((p) => p.eventType === eventType) ?? GENERIC;
+}
+
+/** The organizer kinds an event of this profile may use; profiles saved before this field allow all. */
+export function allowedOrganizerKinds(profile: EventTypeProfile): OrganizerKind[] {
+  return profile.organizerOptions ?? ALL_ORGANIZER_KINDS;
 }

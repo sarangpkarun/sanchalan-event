@@ -28,12 +28,12 @@ class Organizer {
   Map<String, dynamic> toJson() => _$OrganizerToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(includeIfNull: false)
 class UpdateOrganizerProfileBody {
-  const UpdateOrganizerProfileBody({required this.displayName, required this.organizerType});
+  const UpdateOrganizerProfileBody({required this.displayName, this.organizerType});
   factory UpdateOrganizerProfileBody.fromJson(Map<String, dynamic> json) =>
       _$UpdateOrganizerProfileBodyFromJson(json);
   final String displayName;
-  final OrganizerType organizerType;
+  final OrganizerType? organizerType;
   Map<String, dynamic> toJson() => _$UpdateOrganizerProfileBodyToJson(this);
 }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getEventTypeProfile, listEventTypeProfiles } from "../config/event-type-profiles.js";
+import { allowedOrganizerKinds, getEventTypeProfile, listEventTypeProfiles } from "../config/event-type-profiles.js";
 import { validateEventDetails, validateEventDetailsForType } from "../services/event-profile.service.js";
 import { AppError } from "../lib/errors.js";
 
@@ -75,5 +75,18 @@ describe("validateEventDetails", () => {
 
   it("uses the generic profile for an unknown event type", () => {
     expect(() => validateEventDetailsForType("bar_mitzvah", {}, { description: "A party" })).not.toThrow();
+  });
+});
+
+describe("who may organize each event type", () => {
+  it("fits the organizer kinds to the event type", () => {
+    expect(allowedOrganizerKinds(getEventTypeProfile("corporate"))).toEqual(["company", "committee"]);
+    expect(allowedOrganizerKinds(getEventTypeProfile("funeral"))).not.toContain("company");
+    expect(getEventTypeProfile("corporate").defaultOrganizer).toBe("company");
+    expect(getEventTypeProfile("wedding").defaultOrganizer).toBe("family");
+    expect(allowedOrganizerKinds(getEventTypeProfile("custom"))).toHaveLength(4);
+  });
+  it("a profile saved before this field allows every kind", () => {
+    expect(allowedOrganizerKinds({ eventType: "custom", version: 1, steps: [] })).toHaveLength(4);
   });
 });

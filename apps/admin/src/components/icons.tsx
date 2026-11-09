@@ -44,7 +44,18 @@ export function Icon({ name, size = 18 }: { name: IconName; size?: number }) {
 export function BrandMark() {
   return (
     <span className="brand-mark" aria-hidden="true">
-      S
+      <svg viewBox="0 0 100 100" width="100%" height="100%" fill="none">
+        <defs>
+          <linearGradient id="brand-mark-g" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
+            <stop stopColor="#B64D08" />
+            <stop offset="1" stopColor="#7A1F2B" />
+          </linearGradient>
+        </defs>
+        <rect width="100" height="100" rx="28" fill="url(#brand-mark-g)" />
+        <path d="M28 32h40L30 68h42" stroke="#fff" strokeWidth="11" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M76 11q2.6 8.4 11 11-8.4 2.6-11 11-2.6-8.4-11-11 8.4-2.6 11-11Z" fill="#D9A21B" />
+        <circle cx="22" cy="76" r="3.2" fill="#FFF1C9" />
+      </svg>
     </span>
   );
 }

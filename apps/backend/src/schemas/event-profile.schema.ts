@@ -19,6 +19,7 @@ const questionSchema = z.object({
   options: z.array(optionSchema).min(2).max(8).optional(),
   allowOther: z.boolean().optional(),
   required: z.boolean().optional(),
+  suggestions: z.array(z.string().min(1).max(40)).min(2).max(6).optional(),
 });
 
 const generatedProfileSchema = z
@@ -51,6 +52,9 @@ const generatedProfileSchema = z
         }
         if (!isSelect && q.options) {
           ctx.addIssue({ code: "custom", path: [...path, "options"], message: "Only select questions take options." });
+        }
+        if (q.suggestions && q.kind !== "text") {
+          ctx.addIssue({ code: "custom", path: [...path, "suggestions"], message: "Only text questions take suggestions." });
         }
         const values = (q.options ?? []).map((o) => o.value);
         if (new Set(values).size !== values.length) {
@@ -88,6 +92,7 @@ export function validateGeneratedProfileOutput(rawText: string): ValidateGenerat
       ...(q.options ? { options: q.options } : {}),
       ...(q.allowOther ? { allowOther: true } : {}),
       ...(q.required ? { required: true } : {}),
+      ...(q.suggestions ? { suggestions: q.suggestions } : {}),
     })),
   }));
   return { success: true, steps };

@@ -14,7 +14,8 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 // =============================================================================
@@ -394,6 +395,8 @@ enum EventGroupStatus {
 model EventGroup {
   id                  String           @id @default(uuid()) @db.Uuid
   organizerId         String           @map("organizer_id") @db.Uuid
+  /// Who is organizing this event: decides how collaboration and approvals work.
+  organizerType       OrganizerType    @default(individual) @map("organizer_type")
   eventType           EventType        @map("event_type")
   name                String
   region              String

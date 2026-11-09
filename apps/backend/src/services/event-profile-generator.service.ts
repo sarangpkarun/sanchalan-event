@@ -25,6 +25,7 @@ export function buildEventProfilePrompt(description: string) {
     "- single_select and multi_select need 2 to 8 options; option value is lowercase snake_case, label is short.",
     "  Set allowOther true when the list cannot be complete. text and number questions have no options.",
     "- key is a descriptive camelCase word (for example chiefGuestType, stageNeeded), unique across all questions.",
+    "- A text question may carry 2 to 6 short tap-to-fill example answers in \"suggestions\" (text only).",
     "- Prefer tap-to-choose questions over typing. Mark required true only when the plan cannot be made without it.",
     "- Labels are plain, friendly questions addressed to the organizer.",
     "- Respond with STRICT JSON ONLY of the exact shape",

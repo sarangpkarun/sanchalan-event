@@ -40,16 +40,17 @@ class EventInvite {
 }
 
 class EventTeam {
-  const EventTeam({required this.myRole, required this.ownerType, required this.members, required this.invites});
+  const EventTeam({required this.myRole, required this.organizerType, required this.members, required this.invites});
   factory EventTeam.fromJson(Map<String, dynamic> j) => EventTeam(
         myRole: j['myRole'] as String,
-        ownerType: j['ownerType'] as String?,
+        organizerType: j['organizerType'] as String?,
         members: (j['members'] as List).map((m) => EventMember.fromJson(m as Map<String, dynamic>)).toList(),
         invites: (j['invites'] as List).map((m) => EventInvite.fromJson(m as Map<String, dynamic>)).toList(),
       );
 
   final String myRole;
-  final String? ownerType;
+  /// Who is organizing the event: decides how joining and the budget work.
+  final String? organizerType;
   final List<EventMember> members;
   final List<EventInvite> invites;
 

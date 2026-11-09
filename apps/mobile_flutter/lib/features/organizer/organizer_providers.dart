@@ -44,7 +44,7 @@ class OrganizerDataNotifier extends AsyncNotifier<OrganizerData> {
     final repo = ref.read(organizerRepositoryProvider);
     final organizer = await repo.getMe();
     final name = organizer.displayName;
-    if (name == null || name.isEmpty || organizer.organizerType == null) {
+    if (name == null || name.isEmpty) {
       return const OrganizerNeedsProfile();
     }
     return OrganizerReady(organizer, await repo.listEventGroups());
@@ -88,7 +88,7 @@ final organizerDataProvider = AsyncNotifierProvider<OrganizerDataNotifier, Organ
 /// opens with no wait, even offline) and refreshed in the background for next time.
 final eventProfilesProvider = FutureProvider<List<EventTypeProfile>>(
   (ref) async {
-    const key = 'event_type_profiles_v1';
+    const key = 'event_type_profiles_v2';
     final cache = ref.watch(localCacheProvider);
     final repo = ref.watch(organizerRepositoryProvider);
 
