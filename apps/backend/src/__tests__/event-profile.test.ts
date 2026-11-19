@@ -43,6 +43,13 @@ describe("validateEventDetails", () => {
     expect(() => validateEventDetails(wedding, {}, { subEventsWanted: ["bachelor"] })).toThrow(AppError);
   });
 
+  it("accepts a map location pin but still rejects other unknown keys", () => {
+    const loc = { lat: 12.9, lng: 77.5, address: "x" };
+    expect(() => validateEventDetails(wedding, {}, { location: loc })).not.toThrow();
+    expect(() => validateEventDetails(wedding, {}, { location: "x" })).toThrow(AppError);
+    expect(() => validateEventDetails(wedding, {}, { location: loc, bogus: 1 })).toThrow(AppError);
+  });
+
   it("rejects a wrong value type", () => {
     expect(() => validateEventDetails(wedding, {}, { community: 5 })).toThrow(AppError);
   });

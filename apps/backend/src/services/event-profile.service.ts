@@ -7,6 +7,9 @@ import {
 
 type Answers = Record<string, unknown>;
 
+/** Map pin the app attaches to details when a place is picked; not a profile question. */
+const LOCATION_KEY = "location";
+
 function isBlank(v: unknown): boolean {
   return v === undefined || v === null || v === "" || (Array.isArray(v) && v.length === 0);
 }
@@ -48,7 +51,15 @@ export function validateEventDetails(
 
   const issues: string[] = [];
   for (const key of Object.keys(given)) {
+    if (key === LOCATION_KEY) continue; // map pin sent by the app, checked below
     if (!known.has(key)) issues.push(`${key}: not a question for this event type`);
+  }
+  const loc = given[LOCATION_KEY] as Record<string, unknown> | undefined;
+  if (loc !== undefined) {
+    const ok =
+      typeof loc === "object" && loc !== null && !Array.isArray(loc) &&
+      Number.isFinite(loc.lat) && Number.isFinite(loc.lng);
+    if (!ok) issues.push(`${LOCATION_KEY}: must be an object with numeric lat and lng`);
   }
   for (const q of questions) {
     if (!isVisible(q, answers)) continue;

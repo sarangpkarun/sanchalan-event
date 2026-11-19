@@ -5,7 +5,13 @@ import 'package:dio/dio.dart';
 String apiErrorMessage(Object err, String fallback) {
   if (err is DioException) {
     final data = err.response?.data;
-    if (data is Map && data['error'] is String) return data['error'] as String;
+    if (data is Map && data['error'] is String) {
+      final error = data['error'] as String;
+      final details = data['details'];
+      final issues = details is Map ? details['issues'] : null;
+      if (issues is List && issues.isNotEmpty) return '$error: ${issues.join('; ')}';
+      return error;
+    }
   }
   return fallback;
 }
