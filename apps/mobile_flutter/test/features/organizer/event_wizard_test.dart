@@ -116,6 +116,44 @@ void main() {
     // Only type-specific answers go into details, not the core fields.
     expect(got!.details, {'theme': 'Dinosaurs', 'food': 'veg'});
   });
+
+  testWidgets('custom range and Custom style: min goes to details, tier matches per-guest spend', (t) async {
+    WizardResult? got;
+    await t.pumpWidget(MaterialApp(
+      home: EventWizardView(
+        profiles: _profiles,
+        today: DateTime(2026, 10, 13),
+        onSubmit: (r) async {
+          got = r;
+          return null;
+        },
+      ),
+    ));
+    await _tap(t, find.text('Birthday'));
+    await _tap(t, find.text('Next'));
+    await t.enterText(find.byType(TextField).first, 'Party');
+    await _tap(t, find.text('Next'));
+    await t.enterText(find.byType(TextField).at(0), 'Pune');
+    await _tap(t, find.text('Next'));
+
+    await t.enterText(find.byType(TextField).at(0), '100');
+    await _tap(t, find.text('Custom range'));
+    await t.enterText(find.byType(TextField).at(1), '600,000');
+    await t.enterText(find.byType(TextField).at(2), '500,000');
+    await _tap(t, find.text('Custom'));
+    await _tap(t, find.text('Or choose a date'));
+    await _tap(t, find.text('OK'));
+    await _tap(t, find.text('Create event'));
+    expect(got, isNull); // minimum above maximum is rejected
+    expect(find.text("The minimum can't be more than the maximum."), findsOneWidget);
+
+    await t.enterText(find.byType(TextField).at(1), '300,000');
+    await _tap(t, find.text('Create event'));
+    expect(got, isNotNull);
+    expect(got!.budget, 500000);
+    expect(got!.details['budgetMin'], 300000);
+    expect(got!.tier, BudgetTier.standard); // 5,000 per guest
+  });
 }
 
 // --- custom events: the server writes the questions ---

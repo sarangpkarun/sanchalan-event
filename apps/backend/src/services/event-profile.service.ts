@@ -9,6 +9,7 @@ type Answers = Record<string, unknown>;
 
 /** Map pin the app attaches to details when a place is picked; not a profile question. */
 const LOCATION_KEY = "location";
+const BUDGET_MIN_KEY = "budgetMin";
 
 function isBlank(v: unknown): boolean {
   return v === undefined || v === null || v === "" || (Array.isArray(v) && v.length === 0);
@@ -52,7 +53,15 @@ export function validateEventDetails(
   const issues: string[] = [];
   for (const key of Object.keys(given)) {
     if (key === LOCATION_KEY) continue; // map pin sent by the app, checked below
+    if (key === BUDGET_MIN_KEY) continue; // lower end of a custom budget range, checked below
     if (!known.has(key)) issues.push(`${key}: not a question for this event type`);
+  }
+  const minBudget = given[BUDGET_MIN_KEY];
+  if (minBudget !== undefined) {
+    const max = core.totalBudget;
+    if (typeof minBudget !== "number" || !(minBudget > 0) || (typeof max === "number" && minBudget > max)) {
+      issues.push(`${BUDGET_MIN_KEY}: must be a positive number no more than the total budget`);
+    }
   }
   const loc = given[LOCATION_KEY] as Record<string, unknown> | undefined;
   if (loc !== undefined) {

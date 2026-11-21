@@ -36,6 +36,8 @@ export const updateEventGroupSchema = z
     budgetTier: z.enum(["essential", "standard", "premium", "luxury"]).optional(),
     guestCountEstimate: z.number().int().positive().optional(),
     primaryDate: dateOnlySchema.optional(),
+    // Lower end of a custom budget range; null clears it.
+    budgetMin: z.number().positive().nullable().optional(),
     // Only used when totalBudget changes: scale every category by the same ratio, or leave them.
     budgetAdjustment: z.enum(["rescale", "keep"]).optional(),
   })
@@ -45,7 +47,8 @@ export const updateEventGroupSchema = z
       b.totalBudget !== undefined ||
       b.budgetTier !== undefined ||
       b.guestCountEstimate !== undefined ||
-      b.primaryDate !== undefined,
+      b.primaryDate !== undefined ||
+      b.budgetMin !== undefined,
     { message: "Provide at least one field to update." }
   );
 export type UpdateEventGroupInput = z.infer<typeof updateEventGroupSchema>;

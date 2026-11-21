@@ -33,6 +33,20 @@ const _typeIcons = {
   EventType.custom: Icons.tune,
 };
 
+/// Answer key holding the lower end of a custom budget range.
+const budgetMinKey = 'budgetMin';
+
+/// Style answer meaning "I'll set my own amount"; mapped to a real tier on submit.
+const customTierValue = 'custom';
+
+/// Picks the nearest budget style for a per-guest spend (₹), for the custom style.
+BudgetTier tierForPerGuest(double perGuest) {
+  if (perGuest < 3000) return BudgetTier.essential;
+  if (perGuest < 8000) return BudgetTier.standard;
+  if (perGuest < 20000) return BudgetTier.premium;
+  return BudgetTier.luxury;
+}
+
 /// What the wizard collected, split the way the create API wants it.
 class WizardResult {
   const WizardResult({
@@ -215,6 +229,10 @@ class _EventWizardViewState extends State<EventWizardView> {
     if (q.kind == QuestionKind.budget && !_isBlank(v) && (v is! double || v <= 0)) {
       return 'Enter a budget greater than zero.';
     }
+    final min = _answers[budgetMinKey];
+    if (q.kind == QuestionKind.budget && min is double && v is double && min > v) {
+      return 'The minimum can\'t be more than the maximum.';
+    }
     if (q.kind == QuestionKind.number && !_isBlank(v) && (v is! int || v <= 0)) {
       return 'Enter a number greater than zero.';
     }
@@ -343,7 +361,13 @@ class _EventWizardViewState extends State<EventWizardView> {
     }
     if (_location != null) details['location'] = _location!.toJson();
     final name = core['name'], region = core['region'], date = core['primaryDate'];
-    final guests = core['guestCountEstimate'], budget = core['totalBudget'], tier = core['budgetTier'];
+    final guests = core['guestCountEstimate'], budget = core['totalBudget'];
+    var tier = core['budgetTier'];
+    final min = _answers[budgetMinKey];
+    if (min is double && budget is double && min < budget) details['budgetMin'] = min;
+    if (tier == customTierValue && guests is int && budget is double) {
+      tier = enumWireValue(tierForPerGuest(budget / guests));
+    }
     if (_type == null ||
         name is! String ||
         region is! String ||
@@ -515,6 +539,15 @@ class _EventWizardViewState extends State<EventWizardView> {
               errorText: _errorFor(q),
               today: widget.today,
               onLocationPicked: (l) => _location = l,
+              minValue: _answers[budgetMinKey] as double?,
+              onMinChanged: (v) => setState(() {
+                if (v == null) {
+                  _answers.remove(budgetMinKey);
+                } else {
+                  _answers[budgetMinKey] = v;
+                }
+                _saveDraft();
+              }),
               onChanged: (v) => setState(() {
                 if (_isBlank(v)) {
                   _answers.remove(q.key);
@@ -607,7 +640,13 @@ class QuestionField extends StatefulWidget {
     this.errorText,
     this.today,
     this.onLocationPicked,
+    this.minValue,
+    this.onMinChanged,
   });
+
+  /// Lower end of a custom budget range (budget questions only).
+  final double? minValue;
+  final ValueChanged<double?>? onMinChanged;
 
   /// Called when a place is chosen on the map (location questions only).
   final ValueChanged<PickedLocation>? onLocationPicked;
@@ -625,6 +664,9 @@ class QuestionField extends StatefulWidget {
 class _QuestionFieldState extends State<QuestionField> {
   late final TextEditingController _controller = TextEditingController(text: _initialText());
   bool _otherOpen = false;
+  late bool _rangeOpen = widget.minValue != null;
+  late final TextEditingController _minController =
+      TextEditingController(text: widget.minValue?.round().toString() ?? '');
 
   Question get _q => widget.question;
 
@@ -689,6 +731,7 @@ class _QuestionFieldState extends State<QuestionField> {
   @override
   void dispose() {
     _controller.dispose();
+    _minController.dispose();
     super.dispose();
   }
 
@@ -786,10 +829,32 @@ class _QuestionFieldState extends State<QuestionField> {
             _chips([
               for (final b in _budgetShortcuts)
                 _Shortcut(b.$1, v is double && v == b.$2, () => _fill('${b.$2.round()}', b.$2)),
+              _Shortcut('Custom range', _rangeOpen, () {
+                setState(() => _rangeOpen = !_rangeOpen);
+                if (!_rangeOpen) {
+                  _minController.clear();
+                  widget.onMinChanged?.call(null);
+                }
+              }),
             ]),
             const SizedBox(height: AppSpace.m),
+            if (_rangeOpen) ...[
+              AppTextField(
+                label: 'Minimum',
+                controller: _minController,
+                keyboardType: TextInputType.number,
+                prefix: const Padding(
+                  padding: EdgeInsets.only(left: AppSpace.l, right: AppSpace.s),
+                  child: Text('₹'),
+                ),
+                inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9,]'))],
+                helperText: widget.minValue != null ? formatInr(widget.minValue!) : null,
+                onChanged: (s) => widget.onMinChanged?.call(parseAmount(s)),
+              ),
+              const SizedBox(height: AppSpace.m),
+            ],
             AppTextField(
-              label: _q.label,
+              label: _rangeOpen ? 'Maximum' : _q.label,
               controller: _controller,
               keyboardType: TextInputType.number,
               prefix: const Padding(
@@ -851,6 +916,13 @@ class _QuestionFieldState extends State<QuestionField> {
                       // Tapping the chosen option again clears an optional answer.
                       widget.onChanged(selected == o.value && !_q.required ? null : o.value);
                     },
+                  ),
+                if (_q.mapsTo == 'budgetTier')
+                  ChoiceChip(
+                    label: const Text('Custom'),
+                    selected: selected == customTierValue,
+                    showCheckmark: false,
+                    onSelected: (_) => widget.onChanged(customTierValue),
                   ),
                 if (_q.allowOther)
                   ChoiceChip(

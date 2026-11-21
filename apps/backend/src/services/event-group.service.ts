@@ -311,7 +311,7 @@ export async function updateEventGroup(
   input: UpdateEventGroupInput
 ) {
   const current =
-    input.totalBudget !== undefined || input.budgetTier !== undefined
+    input.totalBudget !== undefined || input.budgetTier !== undefined || input.budgetMin !== undefined
       ? (await requireBudgetEdit(organizerId, eventGroupId)).eventGroup
       : await getEditableEventGroupOrThrow(organizerId, eventGroupId);
 
@@ -323,6 +323,19 @@ export async function updateEventGroup(
   if (input.primaryDate !== undefined) data.primaryDate = new Date(input.primaryDate);
 
   const oldTotal = toNumber(current.totalBudget);
+  if (input.budgetMin !== undefined || input.totalBudget !== undefined) {
+    const details = { ...((current.details as Record<string, unknown> | null) ?? {}) };
+    if (input.budgetMin !== undefined) {
+      if (input.budgetMin === null) delete details.budgetMin;
+      else details.budgetMin = input.budgetMin;
+    }
+    const min = details.budgetMin;
+    const max = input.totalBudget ?? oldTotal;
+    if (typeof min === "number" && min > max) {
+      throw new AppError(400, "The minimum budget can't be more than the total budget.");
+    }
+    data.details = details as Prisma.InputJsonObject;
+  }
   const rescale =
     input.budgetAdjustment === "rescale" &&
     input.totalBudget !== undefined &&

@@ -43,6 +43,12 @@ describe("validateEventDetails", () => {
     expect(() => validateEventDetails(wedding, {}, { subEventsWanted: ["bachelor"] })).toThrow(AppError);
   });
 
+  it("accepts a custom budget range minimum and rejects a bad one", () => {
+    expect(() => validateEventDetails(wedding, { totalBudget: 500000 }, { budgetMin: 300000 })).not.toThrow();
+    expect(() => validateEventDetails(wedding, { totalBudget: 500000 }, { budgetMin: 600000 })).toThrow(AppError);
+    expect(() => validateEventDetails(wedding, { totalBudget: 500000 }, { budgetMin: "x" })).toThrow(AppError);
+  });
+
   it("accepts a map location pin but still rejects other unknown keys", () => {
     const loc = { lat: 12.9, lng: 77.5, address: "x" };
     expect(() => validateEventDetails(wedding, {}, { location: loc })).not.toThrow();

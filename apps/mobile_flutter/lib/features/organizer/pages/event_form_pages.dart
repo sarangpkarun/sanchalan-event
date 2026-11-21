@@ -70,6 +70,7 @@ class EventCreatePage extends ConsumerWidget {
             budgetTier: v.tier,
             guestCountEstimate: v.guests,
             primaryDate: toDateOnly(v.date),
+            details: v.budgetMin == null ? null : {'budgetMin': v.budgetMin},
           ),
         ),
       );
@@ -132,6 +133,8 @@ class EventEditPage extends ConsumerWidget {
           guestCountEstimate: v.guests != event.guestCountEstimate ? v.guests : null,
           primaryDate: toDateOnly(v.date) != toDateOnly(event.primaryDate) ? toDateOnly(v.date) : null,
           budgetAdjustment: adjustment,
+          budgetMin: v.budgetMin != (event.details?['budgetMin'] as num?)?.toDouble() ? v.budgetMin : null,
+          clearBudgetMin: v.budgetMin == null && event.details?['budgetMin'] != null,
         );
         String? warning;
         if (body.toJson().isNotEmpty) {

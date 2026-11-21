@@ -21,6 +21,7 @@ class EventFormValues {
     required this.guests,
     required this.budget,
     required this.tier,
+    this.budgetMin,
   });
 
   final EventType type;
@@ -30,6 +31,9 @@ class EventFormValues {
   final int guests;
   final double budget;
   final BudgetTier tier;
+
+  /// Lower end of a custom budget range, or null for a single amount.
+  final double? budgetMin;
 }
 
 const _typeIcons = {
@@ -74,6 +78,11 @@ class _EventFormViewState extends State<EventFormView> {
   late final _budget = TextEditingController(
     text: widget.initial == null ? '' : widget.initial!.totalBudget.round().toString(),
   );
+  late final _budgetMinText = TextEditingController(
+    text: (widget.initial?.details?['budgetMin'] as num?)?.round().toString() ?? '',
+  );
+  late bool _rangeOpen = widget.initial?.details?['budgetMin'] is num;
+  bool _customTier = false;
   late BudgetTier _tier = widget.initial?.budgetTier ?? BudgetTier.standard;
   BudgetAdjustment _adjustment = BudgetAdjustment.rescale;
   bool _showErrors = false;
@@ -88,6 +97,7 @@ class _EventFormViewState extends State<EventFormView> {
     _region.dispose();
     _guests.dispose();
     _budget.dispose();
+    _budgetMinText.dispose();
     super.dispose();
   }
 
@@ -98,6 +108,19 @@ class _EventFormViewState extends State<EventFormView> {
 
   double? get _budgetValue => parseAmount(_budget.text);
 
+  double? get _minValue => _rangeOpen ? parseAmount(_budgetMinText.text) : null;
+
+  /// Nearest budget style for the amount per guest (used by the Custom style).
+  BudgetTier _derivedTier() {
+    final b = _budgetValue, g = _guestCount;
+    if (b == null || g == null) return _tier;
+    final perGuest = b / g;
+    if (perGuest < 3000) return BudgetTier.essential;
+    if (perGuest < 8000) return BudgetTier.standard;
+    if (perGuest < 20000) return BudgetTier.premium;
+    return BudgetTier.luxury;
+  }
+
   bool get _budgetChanged =>
       _isEdit && _budgetValue != null && _budgetValue != widget.initial!.totalBudget;
 
@@ -105,8 +128,13 @@ class _EventFormViewState extends State<EventFormView> {
   String? get _regionError => _showErrors && _region.text.trim().isEmpty ? 'Where is it happening?' : null;
   String? get _dateError => _showErrors && _date == null ? 'Choose the date.' : null;
   String? get _guestError => _showErrors && _guestCount == null ? 'Enter the number of guests.' : null;
-  String? get _budgetError =>
-      _showErrors && _budgetValue == null ? 'Enter a budget greater than zero.' : null;
+  String? get _budgetError {
+    if (!_showErrors) return null;
+    if (_budgetValue == null) return 'Enter a budget greater than zero.';
+    final min = _minValue;
+    if (_rangeOpen && min != null && min > _budgetValue!) return 'The minimum can\'t be more than the maximum.';
+    return null;
+  }
 
   Future<void> _pickDate() async {
     final today = dateOnly(widget.today ?? DateTime.now());
@@ -128,7 +156,8 @@ class _EventFormViewState extends State<EventFormView> {
         (!_isEdit && _region.text.trim().isEmpty) ||
         _date == null ||
         _guestCount == null ||
-        _budgetValue == null) {
+        _budgetValue == null ||
+        _budgetError != null) {
       return;
     }
     setState(() => _submitting = true);
@@ -140,7 +169,8 @@ class _EventFormViewState extends State<EventFormView> {
         date: _date!,
         guests: _guestCount!,
         budget: _budgetValue!,
-        tier: _tier,
+        tier: _customTier ? _derivedTier() : _tier,
+        budgetMin: _minValue != null && _minValue! < _budgetValue! ? _minValue : null,
       ),
       _budgetChanged ? _adjustment : null,
     );
@@ -238,8 +268,35 @@ class _EventFormViewState extends State<EventFormView> {
                       onChanged: (_) => setState(() {}),
                     ),
                     const SizedBox(height: AppSpace.l),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: FilterChip(
+                        label: const Text('Custom range'),
+                        selected: _rangeOpen,
+                        showCheckmark: false,
+                        onSelected: (on) => setState(() {
+                          _rangeOpen = on;
+                          if (!on) _budgetMinText.clear();
+                        }),
+                      ),
+                    ),
+                    if (_rangeOpen) ...[
+                      const SizedBox(height: AppSpace.s),
+                      AppTextField(
+                        label: 'Minimum budget',
+                        controller: _budgetMinText,
+                        keyboardType: TextInputType.number,
+                        prefix: const Padding(
+                          padding: EdgeInsets.only(left: AppSpace.l, right: AppSpace.s),
+                          child: Text('₹'),
+                        ),
+                        inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9,]'))],
+                        onChanged: (_) => setState(() {}),
+                      ),
+                    ],
+                    const SizedBox(height: AppSpace.l),
                     AppTextField(
-                      label: 'Total budget',
+                      label: _rangeOpen ? 'Maximum budget' : 'Total budget',
                       controller: _budget,
                       hint: '15,00,000',
                       keyboardType: TextInputType.number,
@@ -297,14 +354,26 @@ class _EventFormViewState extends State<EventFormView> {
                         for (final t in BudgetTier.values)
                           ChoiceChip(
                             label: Text(budgetTierLabel(t)),
-                            selected: _tier == t,
+                            selected: !_customTier && _tier == t,
                             showCheckmark: false,
-                            onSelected: (_) => setState(() => _tier = t),
+                            onSelected: (_) => setState(() {
+                              _tier = t;
+                              _customTier = false;
+                            }),
                           ),
+                        ChoiceChip(
+                          label: const Text('Custom'),
+                          selected: _customTier,
+                          showCheckmark: false,
+                          onSelected: (_) => setState(() => _customTier = true),
+                        ),
                       ],
                     ),
                     const SizedBox(height: AppSpace.s),
-                    Text(_tierHints[_tier]!, style: text.bodySmall),
+                    Text(
+                      _customTier ? 'Uses your own amount; style is matched to it' : _tierHints[_tier]!,
+                      style: text.bodySmall,
+                    ),
                     if (_error != null) ...[
                       const SizedBox(height: AppSpace.l),
                       Semantics(

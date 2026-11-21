@@ -194,6 +194,11 @@ class _Header extends StatelessWidget {
               info(Icons.location_on_outlined, event.region),
               info(Icons.groups_outlined, plural(event.guestCountEstimate, 'guest')),
               info(Icons.workspace_premium_outlined, '${budgetTierLabel(event.budgetTier)} budget'),
+              if (event.details?['budgetMin'] is num)
+                info(
+                  Icons.payments_outlined,
+                  '${formatInr((event.details!['budgetMin'] as num).toDouble())} – ${formatInr(event.totalBudget)}',
+                ),
             ],
           ),
         ],

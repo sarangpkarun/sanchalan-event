@@ -77,6 +77,7 @@ class EventGroup {
     required this.budgetCategories,
     required this.tasks,
     this.myRole,
+    this.details,
   });
   factory EventGroup.fromJson(Map<String, dynamic> json) => _$EventGroupFromJson(json);
   final String id;
@@ -96,6 +97,9 @@ class EventGroup {
   final DateTime primaryDate;
   final EventGroupStatus status;
   final DateTime createdAt;
+
+  /// Answers to the event type's own questions (also holds `budgetMin` for a custom range).
+  final Map<String, dynamic>? details;
 
   /// The signed-in organizer's role on this event: owner, approver, editor or viewer.
   /// Present on list and get responses; null elsewhere (treated as owner).
@@ -164,6 +168,8 @@ class UpdateEventGroupBody {
     this.guestCountEstimate,
     this.primaryDate,
     this.budgetAdjustment,
+    this.budgetMin,
+    this.clearBudgetMin = false,
   });
   factory UpdateEventGroupBody.fromJson(Map<String, dynamic> json) =>
       _$UpdateEventGroupBodyFromJson(json);
@@ -175,7 +181,17 @@ class UpdateEventGroupBody {
 
   /// Only used when [totalBudget] changes.
   final BudgetAdjustment? budgetAdjustment;
-  Map<String, dynamic> toJson() => _$UpdateEventGroupBodyToJson(this);
+
+  /// Lower end of a custom budget range.
+  final double? budgetMin;
+
+  /// Removes a previously saved range (sends `budgetMin: null`).
+  @JsonKey(includeToJson: false, includeFromJson: false)
+  final bool clearBudgetMin;
+  Map<String, dynamic> toJson() => {
+        ..._$UpdateEventGroupBodyToJson(this),
+        if (clearBudgetMin) 'budgetMin': null,
+      };
 }
 
 @JsonSerializable(explicitToJson: true)

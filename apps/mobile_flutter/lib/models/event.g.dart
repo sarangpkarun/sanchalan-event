@@ -102,6 +102,7 @@ EventGroup _$EventGroupFromJson(Map<String, dynamic> json) => EventGroup(
           .toList() ??
       [],
   myRole: json['myRole'] as String?,
+  details: json['details'] as Map<String, dynamic>?,
 );
 
 Map<String, dynamic> _$EventGroupToJson(
@@ -120,6 +121,7 @@ Map<String, dynamic> _$EventGroupToJson(
   'primaryDate': instance.primaryDate.toIso8601String(),
   'status': _$EventGroupStatusEnumMap[instance.status]!,
   'createdAt': instance.createdAt.toIso8601String(),
+  'details': instance.details,
   'myRole': instance.myRole,
   'subEvents': instance.subEvents.map((e) => e.toJson()).toList(),
   'budgetCategories': instance.budgetCategories.map((e) => e.toJson()).toList(),
@@ -196,6 +198,7 @@ UpdateEventGroupBody _$UpdateEventGroupBodyFromJson(
     _$BudgetAdjustmentEnumMap,
     json['budgetAdjustment'],
   ),
+  budgetMin: (json['budgetMin'] as num?)?.toDouble(),
 );
 
 Map<String, dynamic> _$UpdateEventGroupBodyToJson(
@@ -207,6 +210,7 @@ Map<String, dynamic> _$UpdateEventGroupBodyToJson(
   'guestCountEstimate': ?instance.guestCountEstimate,
   'primaryDate': ?instance.primaryDate,
   'budgetAdjustment': ?_$BudgetAdjustmentEnumMap[instance.budgetAdjustment],
+  'budgetMin': ?instance.budgetMin,
 };
 
 const _$BudgetAdjustmentEnumMap = {
