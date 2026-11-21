@@ -16,6 +16,7 @@ import '../organizer_repository.dart';
 import '../sheets/budget_category_sheet.dart';
 import '../sheets/regenerate_sheet.dart';
 import '../sheets/task_sheet.dart';
+import '../sheets/task_vendors_sheet.dart';
 import '../sheets/team_sheet.dart';
 
 /// Optional instructions for the event screen when it opens, e.g. from a home
@@ -109,7 +110,26 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
     if (ok != null) _refresh();
   }
 
+  /// Tapping a task shows the vendors for it; editing is behind the sheet's Edit button.
   Future<void> _openTask(TaskWithDependencies task) async {
+    final event = ref.read(eventDetailProvider(_id)).value;
+    double? budget;
+    for (final c in event?.budgetCategories ?? const <BudgetCategory>[]) {
+      if (c.categoryKey == task.categoryKey) budget = c.allocatedAmount;
+    }
+    final choice = await showTaskVendorsSheet(context, task: task, region: event?.region, budget: budget);
+    if (!mounted) return;
+    switch (choice) {
+      case TaskEditRequested():
+        await _editTask(task);
+      case TaskVendorChosen(:final vendorId):
+        context.push(AppPaths.vendorDetail(vendorId));
+      case null:
+        break;
+    }
+  }
+
+  Future<void> _editTask(TaskWithDependencies task) async {
     final keys = await _run(_taskCategoryKeys, 'Could not load task categories.');
     if (keys == null || !mounted) return;
     final result = await showTaskSheet(context, task: task, categoryKeys: keys);

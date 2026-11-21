@@ -270,12 +270,26 @@ void main() {
       expect(h.count('GET', '/event-groups/$eventId'), greaterThanOrEqualTo(2)); // reloaded
     });
 
+    testWidgets('tapping a task lists vendors for its category; a vendor opens its page', (tester) async {
+      final task = firstShownTask();
+      final h = await pumpOrganizer(tester);
+      h.go(AppPaths.eventHome(eventId));
+      await tester.pumpAndSettle();
+      await tap(tester, find.text(task.name));
+      expect(h.last('GET', '/vendors').queryParameters['category'], task.categoryKey);
+      expect(find.text('Edit task'), findsOneWidget);
+      expect(find.byType(TaskSheet), findsNothing);
+      await tap(tester, find.text('Shubh Photos'));
+      expect(h.location, AppPaths.vendorDetail(vendorId));
+    });
+
     testWidgets('changing only the status sends only the status', (tester) async {
       final task = firstShownTask();
       final h = await pumpOrganizer(tester, overrides: {'PATCH /tasks/${task.id}': (_) => fixtureBody('task_update')});
       h.go(AppPaths.eventHome(eventId));
       await tester.pumpAndSettle();
       await tap(tester, find.text(task.name));
+      await tap(tester, find.text('Edit task'));
       await tap(tester, inSheet(TaskSheet, 'Done'));
       await tap(tester, inSheet(TaskSheet, 'Save changes'));
       expect(h.last('PATCH', '/tasks/${task.id}').data, {'status': 'done'});
@@ -287,6 +301,7 @@ void main() {
       h.go(AppPaths.eventHome(eventId));
       await tester.pumpAndSettle();
       await tap(tester, find.text(task.name));
+      await tap(tester, find.text('Edit task'));
       await tap(tester, inSheet(TaskSheet, 'Save changes'));
       expect(h.count('PATCH', '/tasks/${task.id}'), 0);
     });
@@ -297,6 +312,7 @@ void main() {
       h.go(AppPaths.eventHome(eventId));
       await tester.pumpAndSettle();
       await tap(tester, find.text(task.name));
+      await tap(tester, find.text('Edit task'));
       await tap(tester, inSheet(TaskSheet, 'Remove this task'));
       expect(h.count('DELETE', '/tasks/${task.id}'), 1);
     });
@@ -307,6 +323,7 @@ void main() {
       h.go(AppPaths.eventHome(eventId));
       await tester.pumpAndSettle();
       await tap(tester, find.text(task.name));
+      await tap(tester, find.text('Edit task'));
       await tap(tester, inSheet(TaskSheet, 'Done'));
       await tap(tester, inSheet(TaskSheet, 'Save changes'));
       expect(find.text('Task is locked.'), findsOneWidget);
